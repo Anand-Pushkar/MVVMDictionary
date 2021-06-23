@@ -1,0 +1,121 @@
+import dependencies.AnnotationProcessing
+import dependencies.InstrumentationTest
+import dependencies.Jetbrains
+import dependencies.Square
+import dependencies.UnitTest
+import dependencies.Version
+import dependencies.AndroidX
+import dependencies.Google
+import dependencies.Glide
+
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'de.mannodermaus.android-junit5'
+}
+
+
+android {
+    compileSdkVersion Version.compileSdk
+    buildToolsVersion Version.buildTools
+
+    defaultConfig {
+        applicationId "com.example.dictionary"
+        minSdkVersion Version.minSdk
+        targetSdkVersion Version.targetSdk
+        versionCode Version.versionCode
+        versionName Version.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        compose true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = Version.jvmTarget
+        useIR = true
+    }
+    composeOptions {
+        def kotlin_compiler_version = Version.kotlin
+        kotlinCompilerVersion kotlin_compiler_version
+
+        def kotlin_compiler_extension_version = Version.kotlin_compiler_extension
+        kotlinCompilerExtensionVersion kotlin_compiler_extension_version
+    }
+    packagingOptions {
+        exclude "META-INF/AL2.0"
+        exclude "META-INF/LGPL2.1"
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+
+    implementation AndroidX.core_ktx
+    implementation AndroidX.app_compat
+    implementation AndroidX.constraint_layout
+    implementation AndroidX.ui_tooling
+    // implementation AndroidX.nav_fragment_ktx // will remove later
+    // implementation AndroidX.nav_ui_ktx // will remove later
+    implementation AndroidX.compose_ui
+    implementation AndroidX.compose_foundation
+    implementation AndroidX.runtime_livedata
+    implementation AndroidX.runtime_rxjava2
+    implementation AndroidX.compose_material
+    implementation AndroidX.compose_icons_core
+    implementation AndroidX.compose_icons_extended
+    implementation AndroidX.compose_constraint
+    implementation AndroidX.activity_compose
+    implementation AndroidX.navigation_compose
+    implementation AndroidX.navigation_hilt
+    implementation AndroidX.room_runtime
+    implementation AndroidX.room_ktx
+    implementation AndroidX.datastore
+    //implementation AndroidX.hilt_lifecycle_viewmodel
+    implementation AndroidX.hilt_navigation_fragment
+    implementation AndroidX.hilt_work
+
+    implementation Google.material
+    implementation Google.hilt_android
+
+    implementation Glide.glide
+
+    implementation Jetbrains.kotlin_stdlib
+
+    implementation Square.retrofit
+    implementation Square.retrofit_gson
+    implementation Square.okHttp
+    implementation Square.leak_canary
+
+    kapt AnnotationProcessing.hilt_compiler
+    kapt AnnotationProcessing.glide_compiler
+    kapt AnnotationProcessing.room_compiler
+
+    // TESTING
+    testImplementation UnitTest.jupiter_api
+    testImplementation UnitTest.jupiter_params
+    testRuntimeOnly UnitTest.jupiter_engine
+
+    // Mock web server
+    testImplementation UnitTest.mock_web_server
+    testImplementation UnitTest.okHttp
+
+    // compose testing
+    implementation InstrumentationTest.compose_ui
+}

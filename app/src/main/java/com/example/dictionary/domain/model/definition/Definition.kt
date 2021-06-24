@@ -6,5 +6,5 @@ data class Definition(
     val score: Int,
     val numSyllables: Int,
     val tags: List<String>,
-    val defs: List<String>
+    val defs: List<String>?
 )

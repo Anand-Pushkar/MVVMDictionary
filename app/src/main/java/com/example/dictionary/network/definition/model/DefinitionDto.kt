@@ -17,5 +17,5 @@ data class DefinitionDto(
     var tags: List<String>,
 
     @SerializedName("defs")
-    var defs: List<String>
+    var defs: List<String>?
 )

@@ -71,8 +71,7 @@ dependencies {
     implementation AndroidX.app_compat
     implementation AndroidX.constraint_layout
     implementation AndroidX.ui_tooling
-    // implementation AndroidX.nav_fragment_ktx // will remove later
-    // implementation AndroidX.nav_ui_ktx // will remove later
+
     implementation AndroidX.compose_ui
     implementation AndroidX.compose_foundation
     implementation AndroidX.runtime_livedata
@@ -87,12 +86,11 @@ dependencies {
     implementation AndroidX.room_runtime
     implementation AndroidX.room_ktx
     implementation AndroidX.datastore
-    //implementation AndroidX.hilt_lifecycle_viewmodel
     implementation AndroidX.hilt_navigation_fragment
     implementation AndroidX.hilt_work
 
     implementation Google.material
-    implementation Google.hilt_android
+    implementation Google.hilt_android //
 
     implementation Glide.glide
 
@@ -103,7 +101,7 @@ dependencies {
     implementation Square.okHttp
     implementation Square.leak_canary
 
-    kapt AnnotationProcessing.hilt_compiler
+    kapt AnnotationProcessing.hilt_compiler //
     kapt AnnotationProcessing.glide_compiler
     kapt AnnotationProcessing.room_compiler
 

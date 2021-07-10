@@ -5,6 +5,7 @@ import dependencies.Square
 import dependencies.UnitTest
 import dependencies.Version
 import dependencies.AndroidX
+import dependencies.Accompanist
 import dependencies.Google
 import dependencies.Glide
 
@@ -88,6 +89,9 @@ dependencies {
     implementation AndroidX.datastore
     implementation AndroidX.hilt_navigation_fragment
     implementation AndroidX.hilt_work
+
+    implementation Accompanist.insets
+    implementation Accompanist.coil
 
     implementation Google.material
     implementation Google.hilt_android //

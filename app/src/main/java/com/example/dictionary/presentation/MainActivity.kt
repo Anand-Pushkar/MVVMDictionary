@@ -1,23 +1,27 @@
 package com.example.dictionary.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.lifecycle.lifecycleScope
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.core.view.WindowCompat
+import androidx.navigation.compose.rememberNavController
+import com.example.dictionary.dataStore.SettingsDataStore
 import com.example.dictionary.domain.model.definition.Definition
 import com.example.dictionary.domain.model.rhyme.Rhyme
 import com.example.dictionary.network.WordService
 import com.example.dictionary.network.definition.model.DefinitionDtoMapper
 import com.example.dictionary.network.rhyme.model.RhymeDtoMapper
-import com.example.dictionary.util.TAG
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var settingsDataStore: SettingsDataStore
 
     @Inject
     lateinit var service: WordService
@@ -31,19 +35,17 @@ class MainActivity : AppCompatActivity() {
     @Inject
     @Named("meta_data") lateinit var md: String
 
+    @ExperimentalComposeUiApi
+    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // This app draws behind the system bars, so we want to handle fitting system windows
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            lifecycleScope.launch {
-                val defs = getDefinitionsFromNetwork()
-                Log.d(TAG, "onCreate: ${defs.size}")
-                Log.d(TAG, "onCreate: Word: ${defs[0].word}")
-                Log.d(TAG, "onCreate: Definitions: ${defs[0].defs?.get(0)}")
-
-                val rhymes = getRhymesFromNetwork()
-                Log.d(TAG, "onCreate: ${rhymes.size}")
-                Log.d(TAG, "onCreate: Rhyme: ${rhymes[0].word}")
-            }
+            DictionaryApp(
+                isDarkTheme = settingsDataStore.isDark.value,
+                onToggleTheme = { settingsDataStore.toggleTheme() }
+            )
         }
     }
 

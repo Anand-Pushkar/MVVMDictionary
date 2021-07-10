@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Dictionary</string>
+
+    <!-- Home Tabs -->
+    <string name="definition">Definition</string>
+    <string name="rhyme">Rhyme</string>
+
+
 </resources>

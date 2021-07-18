@@ -19,7 +19,8 @@ val yellow400 = Color(0xffcaa100)
 val yellow500 = Color(0xffffc000)
 val yellow600 = Color(0xffffde03)
 val yellowDarkPrimary = Color(0xff242316)
-
+val turquoiseVarient1 = Color(0xff00fcc9)
+val turquoiseVarient2 = Color(0xff009879)
 
 /**
  * old blue color scheme
@@ -41,6 +42,8 @@ val blue600 = Color(0xff032297)
 val blue700 = Color(0xff031d7d)
 val blue800 = Color(0xff031863)
 val blueDarkPrimary = Color(0xff1c1d24)
+val redVarient1 = Color(0xffff0336)
+val redVarient2 = Color(0xffff829c)
 
 
 val RedErrorDark = Color(0xFFB00020)

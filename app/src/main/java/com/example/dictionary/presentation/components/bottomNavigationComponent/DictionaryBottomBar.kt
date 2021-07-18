@@ -1,21 +1,18 @@
 package com.example.dictionary.presentation.components.bottomNavigationComponent
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.dictionary.presentation.theme.LocalElevations
 import com.example.dictionary.presentation.ui.home.HomeTabs
+import com.example.dictionary.presentation.util.currentRoute
+import com.example.dictionary.util.TAG
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
 import java.util.*
@@ -23,10 +20,10 @@ import java.util.*
 @Composable
 fun DictionaryBottomBar(navController: NavController, tabs: Array<HomeTabs>) {
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: HomeTabs.DEFINITION.route
     val routes = remember { HomeTabs.values().map { it.route } }
+    val currentRoute = currentRoute(navController = navController)
 
+    Log.d(TAG, "DictionaryBottomBar: $currentRoute")
     if (currentRoute in routes) {
         BottomNavigation(
             modifier = Modifier

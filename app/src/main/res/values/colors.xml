@@ -9,4 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="immersive_sys_ui">#33000000</color>
     <color name="transparent">@android:color/transparent</color>
+    <color name="red_varient_light_theme">#ff0336</color>
+    <color name="red_varient_dark_theme">#ff829c</color>
+    <color name="turquoise_varient_light_theme">#00fcc9</color>
+    <color name="turquoise_varient_dark_theme">#7cffe5</color>
 </resources>
+

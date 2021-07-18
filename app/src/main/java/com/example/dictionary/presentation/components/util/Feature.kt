@@ -1,4 +1,4 @@
-package com.example.dictionary.presentation
+package com.example.dictionary.presentation.components.util
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color

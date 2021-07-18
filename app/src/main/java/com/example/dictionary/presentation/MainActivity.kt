@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.rememberNavController
 import com.example.dictionary.dataStore.SettingsDataStore
 import com.example.dictionary.domain.model.definition.Definition
 import com.example.dictionary.domain.model.rhyme.Rhyme
@@ -39,12 +38,14 @@ class MainActivity : AppCompatActivity() {
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // This app draws behind the system bars, so we want to handle fitting system windows
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             DictionaryApp(
                 isDarkTheme = settingsDataStore.isDark.value,
-                onToggleTheme = { settingsDataStore.toggleTheme() }
+                onToggleTheme = { settingsDataStore.toggleTheme() },
+                finishActivity = { finish() },
+                setOnboardingComplete = { settingsDataStore::setOnboardingComplete },
+                onboardingComplete = settingsDataStore.onboardingComplete
             )
         }
     }

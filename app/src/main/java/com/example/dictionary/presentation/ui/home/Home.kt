@@ -1,27 +1,52 @@
 package com.example.dictionary.presentation.ui.home
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.dictionary.R
+import com.example.dictionary.presentation.navigation.Screen
+import com.example.dictionary.presentation.ui.home.definition.DefinitionScreen
+import com.example.dictionary.presentation.ui.home.rhyme.RhymeScreen
+import com.example.dictionary.util.TAG
 
+@ExperimentalComposeUiApi
 fun NavGraphBuilder.home(
+    darkTheme: Boolean,
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onboardingComplete: State<Boolean>,
+    onToggleTheme: () -> Unit,
 ) {
-    composable(HomeTabs.DEFINITION.route) { from ->
-
+    composable(HomeTabs.DEFINITION.route) {
+        // Show onboarding instead if not shown yet.
+        LaunchedEffect(onboardingComplete) {
+            if (!onboardingComplete.value) {
+                Log.d(TAG, "home: hello, going to onboarding route")
+                navController.navigate(Screen.ONBOARDING_ROUTE.route)
+            }
+        }
+        if (onboardingComplete.value) { // Avoid glitch when showing onboarding
+            DefinitionScreen(
+                darkTheme = darkTheme,
+                modifier = modifier,
+                onToggleTheme = { onToggleTheme() }
+            )
+        }
     }
-    composable(HomeTabs.RHYME.route) { from ->
-
+    composable(HomeTabs.RHYME.route) {
+        RhymeScreen(
+            darkTheme = darkTheme,
+            modifier = modifier,
+            onToggleTheme = { onToggleTheme() }
+        )
     }
-
 }
 
 enum class HomeTabs(

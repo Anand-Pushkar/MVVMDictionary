@@ -41,13 +41,11 @@ fun GreetingSection(
         }
         // This icon can be used to change theme, or to navigate to settings screen, if we make one
         IconButton(
-            onClick = {
-                onToggleTheme()
-            }
+            onClick = { onToggleTheme() }
         ) {
             Icon(
                 painter = if(isDarkTheme) painterResource(id = R.drawable.ic_light_theme) else painterResource(id = R.drawable.ic_dark_theme),
-                contentDescription = "Settings",
+                contentDescription = "toggle theme",
                 tint = MaterialTheme.colors.onPrimary,
                 modifier = Modifier.size(24.dp),
             )

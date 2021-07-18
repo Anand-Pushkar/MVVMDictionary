@@ -4,6 +4,10 @@
     <!-- Home Tabs -->
     <string name="definition">Definition</string>
     <string name="rhyme">Rhyme</string>
+    <string name="favouriteWords">My Words</string>
+    <string name="favouriteRhymes">My Rhymes</string>
+    <string name="label_continue">Continue</string>
+    <string name="label_enter_name">Tell us your name</string>
 
 
 </resources>

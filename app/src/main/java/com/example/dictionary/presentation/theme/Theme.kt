@@ -1,26 +1,21 @@
 package com.example.dictionary.presentation.theme
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.dictionary.R
 import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.util.TAG
-import okhttp3.internal.wait
 
 
 private val YellowThemeLight = lightColors(
     primary = yellow200,
     onPrimary = Color.Black,
+    primaryVariant = turquoiseVarient1,
 
     surface = yellow400,
     onSurface = Color.Black,
@@ -34,6 +29,7 @@ private val YellowThemeLight = lightColors(
 private val YellowThemeDark = darkColors( 
     primary = yellowDarkPrimary,
     onPrimary = Color.White,
+    primaryVariant = turquoiseVarient2,
 
     secondary = yellow200, // primary will become secondary in dark theme
     onSecondary = Color.Black,
@@ -57,6 +53,7 @@ fun YellowTheme(
 private val BlueThemeLight = lightColors(
     primary = blue200,
     onPrimary = Color.White,
+    primaryVariant = redVarient1,
 
     surface = blue400,
     onSurface = Color.White,
@@ -69,6 +66,8 @@ private val BlueThemeLight = lightColors(
 private val BlueThemeDark = darkColors(
     primary = blueDarkPrimary,
     onPrimary = Color.White,
+    primaryVariant = redVarient2,
+
     secondary = blue200,
     onSecondary = Color.White,
 
@@ -128,16 +127,18 @@ private val PinkThemeLight = lightColors(
 )
 
 private val PinkThemeDark = darkColors(
-    primary = pink200,
-    secondary = pink200,
-    surface = pinkDarkPrimary
+    primary = pinkDarkPrimary,
+    onPrimary = Color.White,
+
+    secondary = pink500,
+    surface = pink200
 )
 
 @Composable
 fun PinkTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    val darkTheme = isSystemInDarkTheme()
     val colors = if (darkTheme) {
         PinkThemeDark
     } else {
@@ -149,6 +150,10 @@ fun PinkTheme(
 private val LightElevation = Elevations(card = 4.dp)
 
 private val DarkElevation = Elevations(card = 6.dp)
+
+private val LightImages = Images(logo = R.drawable.ic_logo)
+
+//private val DarkImages = Images(lockupLogo = R.drawable.ic_lockup_white)
 
 @Composable
 private fun DictionaryTheme(
@@ -168,4 +173,35 @@ private fun DictionaryTheme(
         )
     }
 
+}
+
+/**
+ * Alternate to [MaterialTheme] allowing us to add our own theme systems (e.g. [Elevations]) or to
+ * extend [MaterialTheme]'s types e.g. return our own [Colors] extension
+ */
+object DictionaryTheme {
+
+    val colors: Colors
+        @Composable
+        get() = MaterialTheme.colors
+
+
+    val typography: Typography
+        @Composable
+        get() = MaterialTheme.typography
+
+
+    val shapes: Shapes
+        @Composable
+        get() = MaterialTheme.shapes
+
+
+    val elevations: Elevations
+        @Composable
+        get() = LocalElevations.current
+
+
+    val images: Images
+        @Composable
+        get() = LocalImages.current
 }

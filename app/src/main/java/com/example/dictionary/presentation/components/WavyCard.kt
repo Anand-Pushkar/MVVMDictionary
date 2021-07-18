@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dictionary.R
-import com.example.dictionary.presentation.Feature
+import com.example.dictionary.presentation.components.util.Feature
 import com.example.dictionary.presentation.standardQuadFromTo
 import com.example.dictionary.presentation.theme.*
 
@@ -34,7 +34,7 @@ import com.example.dictionary.presentation.theme.*
 
 @ExperimentalFoundationApi
 @Composable
-fun exampleCall(){
+fun exampleCall() {
     FeatureSection(
         features = listOf(
             Feature(
@@ -171,18 +171,18 @@ fun FeatureItem(
                 modifier = Modifier.align(Alignment.BottomStart)
             )
             Text(
-                text = "Start",
-                color = TextWhite,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .clickable {
-                        // Handle the click
-                    }
                     .align(Alignment.BottomEnd)
                     .clip(RoundedCornerShape(10.dp))
                     .background(ButtonBlue)
                     .padding(vertical = 6.dp, horizontal = 15.dp)
+                    .clickable {
+                        // Handle the click
+                    },
+                text = "Start",
+                color = TextWhite,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
             )
         }
     }

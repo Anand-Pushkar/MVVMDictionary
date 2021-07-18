@@ -1,5 +1,6 @@
 package com.example.dictionary.dataStore
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -7,6 +8,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.createDataStore
 import com.example.dictionary.presentation.BaseApplication
+import com.example.dictionary.util.TAG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -28,10 +30,12 @@ constructor(
     private val scope = CoroutineScope(Dispatchers.Main)
 
     init {
+        Log.d(TAG, ": dataStore init")
         observeDataStore()
     }
 
-    val isDark = mutableStateOf(false)
+    val onboardingComplete = mutableStateOf(false)
+    val isDark = mutableStateOf(true)
 
     fun toggleTheme(){
         scope.launch {
@@ -42,15 +46,34 @@ constructor(
         }
     }
 
+    fun setOnboardingComplete(){
+        Log.d(TAG, "setOnboardingComplete: inside the function")
+        scope.launch {
+            datastore.edit { preferences ->
+                preferences[ONBOARDING_KEY] = true
+            }
+        }
+    }
+
     private fun observeDataStore(){
+
         datastore.data.onEach { preferences ->
+
             preferences[DARK_THEME_KEY]?.let { isDarkTheme ->
                 isDark.value = isDarkTheme
             }
+
+            preferences[ONBOARDING_KEY]?.let { isOnboardingComplete ->
+                onboardingComplete.value = isOnboardingComplete
+            }
+
         }.launchIn(scope)
+
+
     }
 
     companion object{
         private val DARK_THEME_KEY = booleanPreferencesKey("dark_theme_key")
+        private val ONBOARDING_KEY = booleanPreferencesKey("onboarding_key")
     }
 }

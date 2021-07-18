@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.theme
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -20,8 +21,8 @@ private val QuickSand = FontFamily(
 val QuickSandTypography = Typography(
     h1 = TextStyle(
         fontFamily = QuickSand,
-        fontWeight = FontWeight.W500,
-        fontSize = 30.sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 40.sp,
     ),
     h2 = TextStyle(
         fontFamily = QuickSand,

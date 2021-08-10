@@ -14,9 +14,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailScreen
 import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.presentation.ui.home.home
 import com.example.dictionary.presentation.ui.onboarding.Onboarding
+import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailScreen
 
 
 @ExperimentalComposeUiApi
@@ -62,8 +64,19 @@ fun NavGraph(
                 navController = navController,
                 modifier = modifier,
                 onboardingComplete = onboardingComplete,
-                onToggleTheme = { onToggleTheme() }
+                onToggleTheme = { onToggleTheme() },
+                onNavigateToDetailScreen = {
+                    if(navBackStackEntry?.lifecycleIsResumed() == true){
+                        navController.navigate(it)
+                    }
+                }
             )
+        }
+        composable(Screen.DEFINITION_DETAIL_ROUTE.route){
+            DefinitionDetailScreen()
+        }
+        composable(Screen.RHYME_DETAIL_ROUTE.route){
+            RhymeDetailScreen()
         }
 
     }

@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var rmapper: RhymeDtoMapper
 
-    @Inject
-    @Named("meta_data") lateinit var md: String
+//    @Inject
+//    @Named("meta_data") lateinit var md: String
 
     @ExperimentalComposeUiApi
     @ExperimentalFoundationApi
@@ -53,8 +53,7 @@ class MainActivity : AppCompatActivity() {
     private suspend fun getDefinitionsFromNetwork(): List<Definition>{
         return dmapper.toDomainList(
             service.getDefinitions(
-                searchQuery = "honesty",
-                metaData = md
+                searchQuery = "honesty"
             )
         )
     }

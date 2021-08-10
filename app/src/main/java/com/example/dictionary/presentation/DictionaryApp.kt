@@ -54,7 +54,7 @@ fun DictionaryApp(
                     navController = navController,
                     modifier = Modifier.padding(it),
                     setOnboardingComplete = setOnboardingComplete,
-                    onboardingComplete = onboardingComplete
+                    onboardingComplete = onboardingComplete,
                 )
             }
         }

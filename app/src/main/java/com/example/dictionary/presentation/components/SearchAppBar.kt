@@ -40,7 +40,7 @@ fun SearchAppBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(1.5.dp),
-            value = "hint",
+            value = "",
             onValueChange = {
                 //onQueryChanged(it)
             },

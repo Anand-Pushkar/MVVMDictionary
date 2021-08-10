@@ -6,19 +6,33 @@ import com.example.dictionary.network.searchSuggestions.model.SearchSuggestionDt
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+const val METADATA = "dsr"
+const val IPA = 1
+
 interface WordService {
 
+    // for definition
     @GET("words")
     suspend fun getDefinitions(
-        @Query("ml") searchQuery: String,
-        @Query("md") metaData: String
+        @Query("sl") searchQuery: String,
+        @Query("md") metaData: String = METADATA,
+        @Query("ipa") ipa: Int = IPA
     ): List<DefinitionDto>
 
+    // for synonyms
+    @GET("words")
+    suspend fun getSynonyms(
+        @Query("ml") searchQuery: String,
+        @Query("md") metaData: String = METADATA
+    ): List<DefinitionDto>
+
+    // for rhymes
     @GET("words")
     suspend fun getRhymes(
         @Query("rel_rhy") searchQuery: String
     ): List<RhymeDto>
 
+    // for searching
     @GET("sug")
     suspend fun getSearchSuggestions(
         @Query("s") searchQuery: String

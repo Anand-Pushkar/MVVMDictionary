@@ -23,6 +23,7 @@ fun NavGraphBuilder.home(
     modifier: Modifier = Modifier,
     onboardingComplete: State<Boolean>,
     onToggleTheme: () -> Unit,
+    onNavigateToDetailScreen: (String) -> Unit
 ) {
     composable(HomeTabs.DEFINITION.route) {
         // Show onboarding instead if not shown yet.
@@ -36,7 +37,8 @@ fun NavGraphBuilder.home(
             DefinitionScreen(
                 darkTheme = darkTheme,
                 modifier = modifier,
-                onToggleTheme = { onToggleTheme() }
+                onToggleTheme = { onToggleTheme() },
+                onNavigateToDefinitionDetailScreen = onNavigateToDetailScreen
             )
         }
     }
@@ -44,7 +46,8 @@ fun NavGraphBuilder.home(
         RhymeScreen(
             darkTheme = darkTheme,
             modifier = modifier,
-            onToggleTheme = { onToggleTheme() }
+            onToggleTheme = { onToggleTheme() },
+            onNavigateToRhymeDetailScreen = onNavigateToDetailScreen
         )
     }
 }

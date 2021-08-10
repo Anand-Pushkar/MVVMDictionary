@@ -2,12 +2,6 @@ package com.example.dictionary.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-/**
- * old yellow color scheme
- */
-val yellow2001 = Color(0xffffeb46)
-val yellow4002 = Color(0xffffc000)
-val yellow5003 = Color(0xffffde03)
 
 /**
  * new yellow color scheme
@@ -22,12 +16,6 @@ val yellowDarkPrimary = Color(0xff242316)
 val turquoiseVarient1 = Color(0xff00fcc9)
 val turquoiseVarient2 = Color(0xff009879)
 
-/**
- * old blue color scheme
- */
-val blue2001 = Color(0xff91a4fc)
-val blue7001 = Color(0xff0336ff)
-val blue8001 = Color(0xff0035c9)
 
 
 /**

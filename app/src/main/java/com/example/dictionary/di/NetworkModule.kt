@@ -50,6 +50,6 @@ object NetworkModule {
     @Provides
     @Named("meta_data")
     fun provideMetaData(): String{
-        return "ds"
+        return "dsr"
     }
 }

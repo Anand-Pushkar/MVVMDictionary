@@ -11,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.dictionary.presentation.ui.home.HomeTabs
-import com.example.dictionary.presentation.util.currentRoute
+import com.example.dictionary.presentation.util.currentTabRoute
 import com.example.dictionary.util.TAG
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.navigationBarsPadding
@@ -21,7 +21,7 @@ import java.util.*
 fun DictionaryBottomBar(navController: NavController, tabs: Array<HomeTabs>) {
 
     val routes = remember { HomeTabs.values().map { it.route } }
-    val currentRoute = currentRoute(navController = navController)
+    val currentRoute = currentTabRoute(navController = navController)
 
     Log.d(TAG, "DictionaryBottomBar: $currentRoute")
     if (currentRoute in routes) {

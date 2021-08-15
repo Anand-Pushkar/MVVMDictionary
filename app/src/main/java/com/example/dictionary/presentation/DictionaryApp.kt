@@ -15,7 +15,7 @@ import com.example.dictionary.presentation.components.bottomNavigationComponent.
 import com.example.dictionary.presentation.navigation.NavGraph
 import com.example.dictionary.presentation.theme.TabTheme
 import com.example.dictionary.presentation.ui.home.HomeTabs
-import com.example.dictionary.presentation.util.currentRoute
+import com.example.dictionary.presentation.util.currentTabRoute
 import com.example.dictionary.presentation.util.currentTab
 import com.google.accompanist.insets.ProvideWindowInsets
 
@@ -34,7 +34,7 @@ fun DictionaryApp(
         val tabs = remember { HomeTabs.values() }
         val navController = rememberNavController()
 
-        val currentRoute = currentRoute(navController = navController)
+        val currentRoute = currentTabRoute(navController = navController)
         val currentTab = currentTab(currentRoute = currentRoute, tabs = tabs)
 
         TabTheme(

@@ -3,6 +3,7 @@ package com.example.dictionary.presentation.ui.home
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -16,6 +17,7 @@ import com.example.dictionary.presentation.ui.home.definition.DefinitionScreen
 import com.example.dictionary.presentation.ui.home.rhyme.RhymeScreen
 import com.example.dictionary.util.TAG
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.home(
     darkTheme: Boolean,
@@ -23,7 +25,8 @@ fun NavGraphBuilder.home(
     modifier: Modifier = Modifier,
     onboardingComplete: State<Boolean>,
     onToggleTheme: () -> Unit,
-    onNavigateToDetailScreen: (String) -> Unit
+    onNavigateToDetailScreen: (String) -> Unit,
+    onNavigateToSearchScreen: (String) -> Unit,
 ) {
     composable(HomeTabs.DEFINITION.route) {
         // Show onboarding instead if not shown yet.
@@ -38,7 +41,8 @@ fun NavGraphBuilder.home(
                 darkTheme = darkTheme,
                 modifier = modifier,
                 onToggleTheme = { onToggleTheme() },
-                onNavigateToDefinitionDetailScreen = onNavigateToDetailScreen
+                onNavigateToDefinitionDetailScreen = onNavigateToDetailScreen,
+                onNavigateToSearchScreen = onNavigateToSearchScreen
             )
         }
     }
@@ -47,7 +51,8 @@ fun NavGraphBuilder.home(
             darkTheme = darkTheme,
             modifier = modifier,
             onToggleTheme = { onToggleTheme() },
-            onNavigateToRhymeDetailScreen = onNavigateToDetailScreen
+            onNavigateToRhymeDetailScreen = onNavigateToDetailScreen,
+            onNavigateToSearchScreen = onNavigateToSearchScreen
         )
     }
 }

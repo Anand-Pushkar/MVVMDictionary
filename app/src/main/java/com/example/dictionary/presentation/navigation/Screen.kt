@@ -7,4 +7,5 @@ sealed class Screen(
     object HOME_ROUTE: Screen("home")
     object DEFINITION_DETAIL_ROUTE: Screen("definitionDetail")
     object RHYME_DETAIL_ROUTE: Screen("rhymeDetail")
+    object SEARCH_SCREEN_ROUTE: Screen("searchScreen")
 }

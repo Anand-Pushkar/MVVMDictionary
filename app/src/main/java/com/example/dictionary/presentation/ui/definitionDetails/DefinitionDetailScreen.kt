@@ -36,27 +36,35 @@ val verbList = listOf("turn yellow", "become yellow")
 
 val adjectiveList = listOf(
     "cowardly or treacherous", "changed to a yellowish color by age", "similar to the color of an egg yolk",
-    "affected by jaundice which causes yellowing of skin etc", "easily frightened", "tcowardly or treacherous",
+    "affected by jaundice which causes yellowing of skin etc", "easily frightened", "cowardly or treacherous",
     "changed to a yellowish color by age", "similar to the color of an egg yolk",
     "affected by jaundice which causes yellowing of skin etc", "easily frightened")
 
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
-fun DefinitionDetailScreen() {
+fun DefinitionDetailScreen(
+    onNavigateToSearchScreen: (String) -> Unit,
+) {
 
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        BgCard()
+        BgCard(
+            onNavigateToSearchScreen = onNavigateToSearchScreen
+        )
         MainCard()
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
-fun BgCard() {
+fun BgCard(
+    onNavigateToSearchScreen: (String) -> Unit,
+) {
 
     Surface(
         color = MaterialTheme.colors.onPrimary,
@@ -68,7 +76,9 @@ fun BgCard() {
                 .fillMaxSize()
                 .padding(top = 48.dp)
         ) {
-            SearchAppBar()
+            SearchAppBar(
+                onNavigateToSearchScreen = onNavigateToSearchScreen
+            )
             Text(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                 text = "Yellow",

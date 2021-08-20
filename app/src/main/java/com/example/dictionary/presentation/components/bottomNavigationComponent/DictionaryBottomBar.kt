@@ -51,7 +51,8 @@ fun DictionaryBottomBar(navController: NavController, tabs: Array<HomeTabs>) {
                     onClick = {
                         if (tab.route != currentRoute) {
                             navController.navigate(tab.route) {
-                                popUpTo(navController.graph.startDestinationId) {
+                                Log.d(TAG, "DictionaryBottomBar: ${navController.graph.startDestinationId}")
+                                 popUpTo(navController.graph.startDestinationId) {
                                     saveState = true
                                 }
                                 launchSingleTop = true

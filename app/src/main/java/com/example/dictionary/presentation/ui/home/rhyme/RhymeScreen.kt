@@ -11,13 +11,15 @@ import com.example.dictionary.presentation.components.GreetingSection
 import com.example.dictionary.presentation.components.SearchAppBar
 import com.example.dictionary.presentation.navigation.Screen
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
 fun RhymeScreen(
     darkTheme: Boolean,
     modifier: Modifier,
     onToggleTheme: () -> Unit,
-    onNavigateToRhymeDetailScreen: (String) -> Unit
+    onNavigateToRhymeDetailScreen: (String) -> Unit,
+    onNavigateToSearchScreen: (String) -> Unit,
 ){
     Scaffold(
         modifier = Modifier
@@ -32,7 +34,9 @@ fun RhymeScreen(
             modifier = Modifier
                 .fillMaxSize(),
         ) {
-            SearchAppBar()
+            SearchAppBar(
+                onNavigateToSearchScreen = onNavigateToSearchScreen
+            )
             FavouriteCard(
                 color = MaterialTheme.colors.primaryVariant,
                 mainText = "My Words",

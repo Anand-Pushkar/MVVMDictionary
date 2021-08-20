@@ -14,18 +14,20 @@ import androidx.compose.ui.unit.dp
 import com.example.dictionary.presentation.components.FavouriteCard
 import com.example.dictionary.presentation.components.GreetingSection
 import com.example.dictionary.presentation.components.SearchAppBar
+import com.example.dictionary.presentation.components.SearchAppBar1
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.DictionaryTheme
 
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
 fun DefinitionScreen(
     darkTheme: Boolean,
     modifier: Modifier,
     onToggleTheme: () -> Unit,
-    isSearchOn: MutableState<Boolean> = mutableStateOf(false),
-    onNavigateToDefinitionDetailScreen: (String) -> Unit
+    onNavigateToDefinitionDetailScreen: (String) -> Unit,
+    onNavigateToSearchScreen: (String) -> Unit,
 ) {
 
     Scaffold(
@@ -33,20 +35,19 @@ fun DefinitionScreen(
             .fillMaxSize(),
         backgroundColor = MaterialTheme.colors.primary,
         topBar = {
-            if (isSearchOn.value) {
-                SearchAppBar()
-            } else {
-                GreetingSection(
-                    isDarkTheme = darkTheme,
-                    onToggleTheme = { onToggleTheme() })
-            }
+            GreetingSection(
+                isDarkTheme = darkTheme,
+                onToggleTheme = { onToggleTheme() }
+            )
         },
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize(),
         ) {
-            SearchAppBar()
+            SearchAppBar(
+                onNavigateToSearchScreen = onNavigateToSearchScreen
+            )
             FavouriteCard(
                 color = MaterialTheme.colors.primaryVariant,
                 mainText = "My Words",
@@ -57,7 +58,7 @@ fun DefinitionScreen(
                 modifier = modifier
                     .padding(start = 120.dp, top = 120.dp),
                 onClick = {
-                    val route = Screen.DEFINITION_DETAIL_ROUTE.route
+                    val route = Screen.SEARCH_SCREEN_ROUTE.route
                     onNavigateToDefinitionDetailScreen(route)
                 },
                 enabled = true,
@@ -73,20 +74,4 @@ fun DefinitionScreen(
             }
         }
     }
-
-//    Column(
-//        modifier = modifier
-//            .fillMaxSize()
-//    ) {
-//        GreetingSection(
-//            isDarkTheme = darkTheme,
-//            onToggleTheme = { onToggleTheme() }
-//        )
-//        SearchAppBar()
-//        FavouriteCard(
-//            color = MaterialTheme.colors.primaryVariant,
-//            mainText = "My Words",
-//            secondaryText = "Favourite words show here",
-//        )
-//    }
 }

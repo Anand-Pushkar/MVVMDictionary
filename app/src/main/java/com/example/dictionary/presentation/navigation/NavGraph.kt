@@ -1,9 +1,11 @@
 package com.example.dictionary.presentation.navigation
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
@@ -19,8 +21,10 @@ import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.presentation.ui.home.home
 import com.example.dictionary.presentation.ui.onboarding.Onboarding
 import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailScreen
+import com.example.dictionary.presentation.ui.searchScreen.SearchScreen
 
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
 fun NavGraph(
@@ -34,6 +38,7 @@ fun NavGraph(
     onboardingComplete: State<Boolean>,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val actions = remember(navController) { MainActions(navController) }
 
     NavHost(
         navController = navController,
@@ -51,7 +56,7 @@ fun NavGraph(
                 onboardingComplete = {
                     // Set the flag so that onboarding is not shown next time, flag is stored in dataStore.
                     setOnboardingComplete()
-                    navController.popBackStack()
+                    actions.onboardingComplete()
                 }
             )
         }
@@ -65,22 +70,60 @@ fun NavGraph(
                 modifier = modifier,
                 onboardingComplete = onboardingComplete,
                 onToggleTheme = { onToggleTheme() },
-                onNavigateToDetailScreen = {
-                    if(navBackStackEntry?.lifecycleIsResumed() == true){
-                        navController.navigate(it)
-                    }
+                onNavigateToDetailScreen = { route ->
+                    navBackStackEntry?.let { actions.openDefinitionDetail(route, it) }
+                },
+                onNavigateToSearchScreen = { route ->
+                    navBackStackEntry?.let { actions.openSearchScreen(route, it) }
                 }
             )
         }
-        composable(Screen.DEFINITION_DETAIL_ROUTE.route){
-            DefinitionDetailScreen()
+        composable(Screen.DEFINITION_DETAIL_ROUTE.route){ backStackEntry: NavBackStackEntry ->
+            DefinitionDetailScreen(
+                onNavigateToSearchScreen = { route ->
+                    actions.openSearchScreen(route, backStackEntry)
+                }
+            )
         }
-        composable(Screen.RHYME_DETAIL_ROUTE.route){
-            RhymeDetailScreen()
+        composable(Screen.RHYME_DETAIL_ROUTE.route){ backStackEntry: NavBackStackEntry ->
+            RhymeDetailScreen(
+                onNavigateToSearchScreen = { route ->
+                    actions.openSearchScreen(route, backStackEntry)
+                }
+            )
         }
-
+        composable(Screen.SEARCH_SCREEN_ROUTE.route){ backStackEntry: NavBackStackEntry ->
+            SearchScreen(
+                onNavigateToDefinitionDetailScreen = { route ->
+                    actions.openDefinitionDetail(route, backStackEntry)
+                }
+            )
+        }
     }
 }
+
+class MainActions(navController: NavHostController) {
+
+    val onboardingComplete: () -> Unit = {
+        navController.popBackStack()
+    }
+
+    val openDefinitionDetail = { route: String, from: NavBackStackEntry ->
+        // In order to discard duplicated navigation events, we check the Lifecycle
+        if (from.lifecycleIsResumed()) {
+            navController.navigate(route)
+        }
+    }
+
+    val openSearchScreen = { route: String, from: NavBackStackEntry ->
+        // In order to discard duplicated navigation events, we check the Lifecycle
+        if (from.lifecycleIsResumed()) {
+            navController.navigate(route)
+        }
+    }
+
+}
+
 
 
 
@@ -89,5 +132,5 @@ fun NavGraph(
  *
  * This is used to de-duplicate navigation events.
  */
-private fun NavBackStackEntry.lifecycleIsResumed() =
+fun NavBackStackEntry.lifecycleIsResumed() =
     this.lifecycle.currentState == Lifecycle.State.RESUMED

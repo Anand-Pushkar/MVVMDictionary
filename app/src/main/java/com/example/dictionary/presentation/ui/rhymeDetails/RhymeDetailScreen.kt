@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -24,21 +25,28 @@ import com.example.dictionary.presentation.components.SearchAppBar
 
 val isFavourite = mutableStateOf(false)
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
-@Preview(showBackground = true)
 @Composable
-fun RhymeDetailScreen(){
+fun RhymeDetailScreen(
+    onNavigateToSearchScreen: (String) -> Unit,
+){
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        BgCard()
+        BgCard(
+            onNavigateToSearchScreen = onNavigateToSearchScreen
+        )
         MainCard()
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
-fun BgCard() {
+fun BgCard(
+    onNavigateToSearchScreen: (String) -> Unit,
+) {
 
     Surface(
         color = MaterialTheme.colors.onPrimary,
@@ -50,7 +58,9 @@ fun BgCard() {
                 .fillMaxSize()
                 .padding(top = 48.dp)
         ) {
-            SearchAppBar()
+            SearchAppBar(
+                onNavigateToSearchScreen = onNavigateToSearchScreen
+            )
             Text(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                 text = "Yellow",

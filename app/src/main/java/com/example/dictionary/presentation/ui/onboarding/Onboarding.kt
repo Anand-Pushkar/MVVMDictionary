@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.ui.onboarding
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -18,20 +19,33 @@ import com.example.dictionary.R
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.DictionaryTheme
 import com.example.dictionary.presentation.theme.PinkTheme
+import com.example.dictionary.presentation.ui.util.DialogQueue
 import com.example.dictionary.util.TAG
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 
+@ExperimentalMaterialApi
 @Composable
 fun Onboarding(
     darkTheme: Boolean,
+    isNetworkAvailable: MutableState<Boolean>,
     onboardingComplete: () -> Unit,
 ) {
-    Log.d(TAG, "Onboarding: ##!!")
-    PinkTheme {
+    val scaffoldState = rememberScaffoldState()
+
+    PinkTheme(
+        isNetworkAvailable = isNetworkAvailable,
+        displayProgressBar = false,
+        scaffoldState = scaffoldState,
+        dialogQueue = DialogQueue().queue.value,
+    ) {
         Scaffold(
             topBar = { AppBar() },
             backgroundColor = MaterialTheme.colors.primary,
+            scaffoldState = scaffoldState,
+            snackbarHost = {
+                scaffoldState.snackbarHostState
+            },
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
@@ -88,11 +102,15 @@ private fun AppBar() {
 }
 
 
+@SuppressLint("UnrememberedMutableState")
+@ExperimentalMaterialApi
 @Preview(name = "Onboarding")
 @Composable
 private fun OnboardingPreview() {
-    Onboarding(darkTheme = false, onboardingComplete = { },
-        //onNavigateToHomeScreen = {}
+    Onboarding(
+        darkTheme = false,
+        isNetworkAvailable = mutableStateOf(true),
+        onboardingComplete = {}
     )
 }
 

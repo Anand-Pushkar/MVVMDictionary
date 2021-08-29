@@ -39,6 +39,7 @@ import com.example.dictionary.util.TAG
 @Composable
 fun SearchAppBar(
     onNavigateToSearchScreen: (String) -> Unit,
+    route: String,
     //query: String,
     //onQueryChanged: (String) -> Unit,
     //onExecuteSearch: () -> Unit,
@@ -51,19 +52,15 @@ fun SearchAppBar(
             .clip(RoundedCornerShape(32.dp)),
         color = MaterialTheme.colors.secondary,
         elevation = 8.dp,
-        onClick = {
-            val route = Screen.SEARCH_SCREEN_ROUTE.route
-            onNavigateToSearchScreen(route)
-        },
+
     ) {
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(1.5.dp)
+                .padding(2.dp)
                 .onFocusEvent {
                     if(it.isFocused){
-                        Log.d(TAG, "SearchAppBar1: ######### ${Screen.SEARCH_SCREEN_ROUTE.route}")
-                        val route = Screen.SEARCH_SCREEN_ROUTE.route
+                        keyboardController?.hide()
                         onNavigateToSearchScreen(route)
                     }
                 },

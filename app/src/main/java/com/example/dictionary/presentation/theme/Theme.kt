@@ -1,15 +1,23 @@
 package com.example.dictionary.presentation.theme
 
+import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.R
+import com.example.dictionary.presentation.components.*
 import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.util.TAG
+import java.util.*
 
 
 private val YellowThemeLight = lightColors(
@@ -37,17 +45,30 @@ private val YellowThemeDark = darkColors(
     onSurface = Color.White,
 )
 
+@ExperimentalMaterialApi
 @Composable
 fun YellowTheme(
-    darkTheme: Boolean,
+    darkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
+    displayProgressBar: Boolean,
+    scaffoldState: ScaffoldState,
+    dialogQueue: Queue<GenericDialogInfo>,
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
+    val colors = if (darkTheme.value) {
         YellowThemeDark
     } else {
         YellowThemeLight
     }
-    DictionaryTheme(darkTheme, colors, content)
+    DictionaryTheme(
+        darkTheme = darkTheme,
+        isNetworkAvailable = isNetworkAvailable,
+        displayProgressBar = displayProgressBar,
+        scaffoldState = scaffoldState,
+        dialogQueue = dialogQueue,
+        colors = colors,
+        content = content
+    )
 }
 
 private val BlueThemeLight = lightColors(
@@ -75,30 +96,51 @@ private val BlueThemeDark = darkColors(
 
 )
 
+@ExperimentalMaterialApi
 @Composable
 fun BlueTheme(
-    darkTheme: Boolean,
+    darkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
+    scaffoldState: ScaffoldState,
+    dialogQueue: Queue<GenericDialogInfo>,
+    displayProgressBar: Boolean,
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
+    val colors = if (darkTheme.value) {
         BlueThemeDark
     } else {
         BlueThemeLight
     }
-    DictionaryTheme(darkTheme, colors, content)
+    DictionaryTheme(
+        darkTheme = darkTheme,
+        isNetworkAvailable = isNetworkAvailable,
+        displayProgressBar = displayProgressBar,
+        scaffoldState = scaffoldState,
+        dialogQueue = dialogQueue,
+        colors = colors,
+        content = content
+    )
 }
 
+@ExperimentalMaterialApi
 @Composable
 fun TabTheme(
-    isDarkTheme: Boolean,
-    selectedTab: String,
+    isDarkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
+    displayProgressBar: Boolean,
+    scaffoldState: ScaffoldState,
+    dialogQueue: Queue<GenericDialogInfo>,
+    selectedTab: MutableState<String>,
     content: @Composable () -> Unit
 ){
-    Log.d(TAG, "TabTheme: selectedTab = $selectedTab")
-    when (selectedTab) {
+    when (selectedTab.value) {
         HomeTabs.DEFINITION.id -> {
             BlueTheme(
                 darkTheme = isDarkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                displayProgressBar = displayProgressBar,
+                scaffoldState = scaffoldState,
+                dialogQueue = dialogQueue,
                 content = content
             )
 
@@ -106,12 +148,20 @@ fun TabTheme(
         HomeTabs.RHYME.id -> {
             YellowTheme(
                 darkTheme = isDarkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                displayProgressBar = displayProgressBar,
+                scaffoldState = scaffoldState,
+                dialogQueue = dialogQueue,
                 content = content
             )
         }
         else -> {
             BlueTheme(
                 darkTheme = isDarkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                displayProgressBar = displayProgressBar,
+                scaffoldState = scaffoldState,
+                dialogQueue = dialogQueue,
                 content = content
             )
         }
@@ -134,17 +184,31 @@ private val PinkThemeDark = darkColors(
     surface = pink200
 )
 
+@ExperimentalMaterialApi
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun PinkTheme(
+    isNetworkAvailable: MutableState<Boolean>,
+    displayProgressBar: Boolean,
+    scaffoldState: ScaffoldState,
+    dialogQueue: Queue<GenericDialogInfo>,
     content: @Composable () -> Unit
 ) {
-    val darkTheme = isSystemInDarkTheme()
-    val colors = if (darkTheme) {
+    val darkTheme: MutableState<Boolean> = mutableStateOf(isSystemInDarkTheme())
+    val colors = if (darkTheme.value) {
         PinkThemeDark
     } else {
         PinkThemeLight
     }
-    DictionaryTheme(darkTheme, colors, content)
+    DictionaryTheme(
+        darkTheme = darkTheme,
+        isNetworkAvailable = isNetworkAvailable,
+        displayProgressBar = displayProgressBar,
+        scaffoldState = scaffoldState,
+        dialogQueue = dialogQueue,
+        colors = colors,
+        content = content
+    )
 }
 
 private val LightElevation = Elevations(card = 4.dp)
@@ -155,13 +219,18 @@ private val LightImages = Images(logo = R.drawable.ic_logo)
 
 //private val DarkImages = Images(lockupLogo = R.drawable.ic_lockup_white)
 
+@ExperimentalMaterialApi
 @Composable
 private fun DictionaryTheme(
-    darkTheme: Boolean,
+    darkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
+    displayProgressBar: Boolean, // loading
+    scaffoldState: ScaffoldState,
+    dialogQueue: Queue<GenericDialogInfo>,
     colors: Colors,
     content: @Composable () -> Unit
 ) {
-    val elevation = if (darkTheme) DarkElevation else LightElevation
+    val elevation = if (darkTheme.value) DarkElevation else LightElevation
     CompositionLocalProvider(
         LocalElevations provides elevation,
     ){
@@ -169,11 +238,55 @@ private fun DictionaryTheme(
             colors = colors,
             typography = QuickSandTypography,
             shapes = Shapes,
-            content = content
-        )
+
+        ){
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colors.primary)
+            ) {
+                Column {
+                    ConnectivityMonitor(
+                        isNetworkAvailable = isNetworkAvailable,
+                        darkTheme = darkTheme
+                    )
+                    content()
+                }
+                CircularIndeterminateProgressBar(
+                    isDisplayed = displayProgressBar,
+                    verticalBias = 0.3f
+                )
+                DefaultSnackbar(
+                    snackbarHostState = scaffoldState.snackbarHostState,
+                    onDismiss = {
+                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                    },
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
+                ProcessDialogQueue(dialogQueue = dialogQueue)
+            }
+        }
     }
 
 }
+
+@Composable
+fun ProcessDialogQueue(
+    dialogQueue: Queue<GenericDialogInfo>
+){
+    dialogQueue.peek()?.let { dialogInfo ->
+        GenericDialog(
+            onDismiss = dialogInfo.onDismiss,
+            title = dialogInfo.title,
+            description = dialogInfo.description,
+            positiveAction = dialogInfo.positiveAction,
+            negativeAction = dialogInfo.negativeAction
+        )
+
+    }
+}
+
+
 
 /**
  * Alternate to [MaterialTheme] allowing us to add our own theme systems (e.g. [Elevations]) or to

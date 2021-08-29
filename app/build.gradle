@@ -54,7 +54,7 @@ android {
         def kotlin_compiler_version = Version.kotlin
         kotlinCompilerVersion kotlin_compiler_version
 
-        def kotlin_compiler_extension_version = Version.kotlin_compiler_extension
+        def kotlin_compiler_extension_version = Version.compose
         kotlinCompilerExtensionVersion kotlin_compiler_extension_version
     }
     packagingOptions {
@@ -92,9 +92,10 @@ dependencies {
 
     implementation Accompanist.insets
     implementation Accompanist.coil
+    implementation Accompanist.animations
 
     implementation Google.material
-    implementation Google.hilt_android //
+    implementation Google.hilt_android 
 
     implementation Glide.glide
 

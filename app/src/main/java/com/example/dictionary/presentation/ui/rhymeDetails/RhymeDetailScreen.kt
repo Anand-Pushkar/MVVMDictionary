@@ -6,11 +6,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,6 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.example.dictionary.R
 import com.example.dictionary.presentation.components.SearchAppBar
+import com.example.dictionary.presentation.navigation.Screen
+import com.example.dictionary.presentation.theme.TabTheme
+import com.example.dictionary.presentation.theme.YellowTheme
+import com.example.dictionary.presentation.ui.util.DialogQueue
+import com.example.dictionary.util.RHYME
 
 val isFavourite = mutableStateOf(false)
 
@@ -29,15 +32,36 @@ val isFavourite = mutableStateOf(false)
 @ExperimentalComposeUiApi
 @Composable
 fun RhymeDetailScreen(
+    isDark: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
     onNavigateToSearchScreen: (String) -> Unit,
 ){
-    Box(
-        modifier = Modifier.fillMaxSize()
+    val scaffoldState = rememberScaffoldState()
+
+    YellowTheme(
+        darkTheme = isDark,
+        isNetworkAvailable = isNetworkAvailable,
+        scaffoldState = scaffoldState,
+        dialogQueue = DialogQueue().queue.value, // replace with the reference created in the viewModel
+        displayProgressBar = false, // replace with loading
     ) {
-        BgCard(
-            onNavigateToSearchScreen = onNavigateToSearchScreen
-        )
-        MainCard()
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize(),
+            scaffoldState = scaffoldState,
+            snackbarHost = {
+                scaffoldState.snackbarHostState
+            },
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                BgCard(
+                    onNavigateToSearchScreen = onNavigateToSearchScreen
+                )
+                MainCard()
+            }
+        }
     }
 }
 
@@ -59,7 +83,8 @@ fun BgCard(
                 .padding(top = 48.dp)
         ) {
             SearchAppBar(
-                onNavigateToSearchScreen = onNavigateToSearchScreen
+                onNavigateToSearchScreen = onNavigateToSearchScreen,
+                route = Screen.SEARCH_SCREEN_ROUTE.withArgs("rhyme")
             )
             Text(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),

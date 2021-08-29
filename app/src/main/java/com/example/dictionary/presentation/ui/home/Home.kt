@@ -3,32 +3,50 @@ package com.example.dictionary.presentation.ui.home
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
 import com.example.dictionary.R
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.ui.home.definition.DefinitionScreen
 import com.example.dictionary.presentation.ui.home.rhyme.RhymeScreen
 import com.example.dictionary.util.TAG
 
+import com.google.accompanist.navigation.animation.navigation
+import com.google.accompanist.navigation.animation.composable
+
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.home(
-    darkTheme: Boolean,
+    darkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     onboardingComplete: State<Boolean>,
     onToggleTheme: () -> Unit,
     onNavigateToDetailScreen: (String) -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
+    width: Int
 ) {
-    composable(HomeTabs.DEFINITION.route) {
+    composable(
+        route = HomeTabs.DEFINITION.route,
+        exitTransition = { _, _ ->
+            fadeOut(animationSpec = tween(300))
+        },
+        enterTransition = { _, _ ->
+            fadeIn(animationSpec = tween(300))
+        }
+    ) {
         // Show onboarding instead if not shown yet.
         LaunchedEffect(onboardingComplete) {
             if (!onboardingComplete.value) {
@@ -39,17 +57,25 @@ fun NavGraphBuilder.home(
         if (onboardingComplete.value) { // Avoid glitch when showing onboarding
             DefinitionScreen(
                 darkTheme = darkTheme,
-                modifier = modifier,
+                isNetworkAvailable = isNetworkAvailable,
                 onToggleTheme = { onToggleTheme() },
                 onNavigateToDefinitionDetailScreen = onNavigateToDetailScreen,
                 onNavigateToSearchScreen = onNavigateToSearchScreen
             )
         }
     }
-    composable(HomeTabs.RHYME.route) {
+    composable(
+        route = HomeTabs.RHYME.route,
+        exitTransition = { _, _ ->
+            fadeOut(animationSpec = tween(300))
+        },
+        enterTransition = { _, _ ->
+            fadeIn(animationSpec = tween(300))
+        }
+    ) {
         RhymeScreen(
             darkTheme = darkTheme,
-            modifier = modifier,
+            isNetworkAvailable = isNetworkAvailable,
             onToggleTheme = { onToggleTheme() },
             onNavigateToRhymeDetailScreen = onNavigateToDetailScreen,
             onNavigateToSearchScreen = onNavigateToSearchScreen

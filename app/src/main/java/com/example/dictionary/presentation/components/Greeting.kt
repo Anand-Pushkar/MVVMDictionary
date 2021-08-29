@@ -6,6 +6,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,7 +18,8 @@ import com.example.dictionary.R
 fun GreetingSection(
     // pick up from datastore / shared prefs
     name: String = "Pushkar",
-    isDarkTheme: Boolean,
+    isNetworkAvailable: MutableState<Boolean>,
+    isDarkTheme: MutableState<Boolean>,
     onToggleTheme: () -> Unit
 ) {
     Row(
@@ -25,7 +27,9 @@ fun GreetingSection(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(
+                top = if(isNetworkAvailable.value){ 48.dp } else { 0.dp },
+                bottom = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.Center
@@ -44,7 +48,7 @@ fun GreetingSection(
             onClick = { onToggleTheme() }
         ) {
             Icon(
-                painter = if(isDarkTheme) painterResource(id = R.drawable.ic_light_theme) else painterResource(id = R.drawable.ic_dark_theme),
+                painter = if(isDarkTheme.value) painterResource(id = R.drawable.ic_light_theme) else painterResource(id = R.drawable.ic_dark_theme),
                 contentDescription = "toggle theme",
                 tint = MaterialTheme.colors.onPrimary,
                 modifier = Modifier.size(24.dp),

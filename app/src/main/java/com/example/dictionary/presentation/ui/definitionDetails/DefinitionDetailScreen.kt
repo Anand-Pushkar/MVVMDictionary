@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.example.dictionary.R
 import com.example.dictionary.presentation.components.SearchAppBar
+import com.example.dictionary.presentation.navigation.Screen
+import com.example.dictionary.presentation.theme.BlueTheme
+import com.example.dictionary.presentation.theme.TabTheme
+import com.example.dictionary.presentation.ui.util.DialogQueue
+import com.example.dictionary.util.DEFINITION
 
 val isFavourite = mutableStateOf(false)
 val nounList = listOf(
@@ -46,17 +52,38 @@ val adjectiveList = listOf(
 //@Preview(showBackground = true)
 @Composable
 fun DefinitionDetailScreen(
+    isDark: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
     onNavigateToSearchScreen: (String) -> Unit,
 ) {
+    val scaffoldState = rememberScaffoldState()
 
-    Box(
-        modifier = Modifier.fillMaxSize()
+    BlueTheme(
+        darkTheme = isDark,
+        isNetworkAvailable = isNetworkAvailable,
+        scaffoldState = scaffoldState,
+        dialogQueue = DialogQueue().queue.value, // replace with the reference created in the viewModel
+        displayProgressBar = false, // replace with loading
     ) {
-        BgCard(
-            onNavigateToSearchScreen = onNavigateToSearchScreen
-        )
-        MainCard()
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize(),
+            scaffoldState = scaffoldState,
+            snackbarHost = {
+                scaffoldState.snackbarHostState
+            },
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                BgCard(
+                    onNavigateToSearchScreen = onNavigateToSearchScreen
+                )
+                MainCard()
+            }
+        }
     }
+
 }
 
 @ExperimentalMaterialApi
@@ -77,7 +104,8 @@ fun BgCard(
                 .padding(top = 48.dp)
         ) {
             SearchAppBar(
-                onNavigateToSearchScreen = onNavigateToSearchScreen
+                onNavigateToSearchScreen = onNavigateToSearchScreen,
+                route = Screen.SEARCH_SCREEN_ROUTE.withArgs("definition")
             )
             Text(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),

@@ -8,6 +8,7 @@ import retrofit2.http.Query
 
 const val METADATA = "dsr"
 const val IPA = 1
+const val MAX_RESULT = 20
 
 interface WordService {
 
@@ -35,7 +36,8 @@ interface WordService {
     // for searching
     @GET("sug")
     suspend fun getSearchSuggestions(
-        @Query("s") searchQuery: String
+        @Query("s") searchQuery: String,
+        @Query("max") maxResults: Int = MAX_RESULT
     ): List<SearchSuggestionDto>
 
 }

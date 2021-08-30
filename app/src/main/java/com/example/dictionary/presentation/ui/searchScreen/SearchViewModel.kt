@@ -3,6 +3,9 @@ package com.example.dictionary.presentation.ui.searchScreen
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionary.domain.model.searchSuggestion.SearchSuggestion
@@ -29,6 +32,15 @@ constructor(
 
     val searchSuggestions: MutableState<List<SearchSuggestion>> = mutableStateOf(listOf())
     val query = mutableStateOf("")
+    val initialCursorPosition: MutableState<Int> = mutableStateOf(0)
+    val cursorPosition = initialCursorPosition.value.takeIf { it <= query.value.length } ?: query.value.length
+    val textFieldValue = mutableStateOf(
+        TextFieldValue(
+            text = query.value,
+            selection = TextRange(cursorPosition)
+        )
+    )
+
     val dialogQueue = DialogQueue()
     var loading = mutableStateOf(false)
 
@@ -39,6 +51,10 @@ constructor(
                 when(event){
                     is OnQueryChangedEvent -> {
                         onQueryChanged(event.query)
+                    }
+
+                    is OnTextFieldValueChanged -> {
+                        setTextFieldValue(event.tfv)
                     }
 
                 }
@@ -84,4 +100,9 @@ constructor(
     private fun setQuery(query: String) {
         this.query.value = query
     }
+
+    private fun setTextFieldValue(tfv: TextFieldValue){
+        this.textFieldValue.value = tfv
+    }
+
 }

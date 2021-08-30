@@ -19,39 +19,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.domain.model.searchSuggestion.SearchSuggestion
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.TabTheme
-import com.example.dictionary.presentation.ui.util.DialogQueue
 import com.example.dictionary.util.TAG
 
-val list = listOf(
-    "banana",
-    "apple",
-    "mango",
-    "peach",
-    "watermelon",
-    "guava",
-    "pineapple",
-    "orange",
-    "kiwi",
-    "avocado",
-    "banana",
-    "apple",
-    "mango",
-    "peach",
-    "watermelon",
-    "guava",
-    "pineapple",
-    "orange",
-    "kiwi",
-    "avocado"
-)
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
@@ -65,6 +43,7 @@ fun SearchScreen(
 ) {
 
     val query = viewModel.query.value
+    val textFieldValue = viewModel.textFieldValue.value
     val searchSuggestions = viewModel.searchSuggestions.value
     val scaffoldState = rememberScaffoldState()
     val dialogQueue = viewModel.dialogQueue
@@ -98,9 +77,13 @@ fun SearchScreen(
                     onNavigateToDetailScreen = onNavigateToDetailScreen,
                     route = route,
                     query = query,
+                    textFieldValue = textFieldValue,
                     onQueryChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnQueryChangedEvent(it))
                     },
+                    onTextFieldValueChanged = {
+                        viewModel.onTriggerEvent(SearchScreenEvent.OnTextFieldValueChanged(it))
+                    }
                 )
                 SearchSuggestionsList(
                     loading = loading,
@@ -110,6 +93,9 @@ fun SearchScreen(
                     onQueryChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnQueryChangedEvent(it))
                     },
+                    onTextFieldValueChanged = {
+                        viewModel.onTriggerEvent(SearchScreenEvent.OnTextFieldValueChanged(it))
+                    }
                 )
             }
         }
@@ -122,7 +108,9 @@ fun SearchSection(
     onNavigateToDetailScreen: (String) -> Unit,
     route: String,
     query: String,
+    textFieldValue: TextFieldValue,
     onQueryChanged: (String) -> Unit,
+    onTextFieldValueChanged: (TextFieldValue) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -132,9 +120,11 @@ fun SearchSection(
             .fillMaxWidth()
             .focusRequester(focusRequester),
         enabled = true,
-        value = query,
+        value = textFieldValue,
         onValueChange = {
-            onQueryChanged(it)
+            Log.d(TAG, "SearchSection: ${it.text}")
+            onQueryChanged(it.text)
+            onTextFieldValueChanged(it)
         },
         label = {
             Text(text = "Search", color = MaterialTheme.colors.onPrimary)
@@ -163,8 +153,6 @@ fun SearchSection(
             focusedIndicatorColor = MaterialTheme.colors.secondary,
             cursorColor = MaterialTheme.colors.onPrimary,
             textColor = MaterialTheme.colors.onPrimary
-//                unfocusedIndicatorColor = Color.Transparent,
-//                disabledIndicatorColor = Color.Transparent
         ),
     )
 
@@ -179,6 +167,7 @@ fun SearchSuggestionsList(
     loading: Boolean,
     onNavigateToDetailScreen: (String) -> Unit,
     onQueryChanged: (String) -> Unit,
+    onTextFieldValueChanged: (TextFieldValue) -> Unit,
     route: String,
     searchSuggestions: List<SearchSuggestion>,
 ) {
@@ -214,10 +203,12 @@ fun SearchSuggestionsList(
                             selected = true,
                             onClick = {
                                 onQueryChanged(item.word) // this update the query
-
+                                onTextFieldValueChanged(TextFieldValue().copy(
+                                    text = item.word,
+                                    selection = TextRange(item.word.length)
+                                ))
                                 // pass the selected word with the route
                                 onNavigateToDetailScreen(route)
-                                Log.d(TAG, "SearchSuggestionsList: ${list.size}")
                             }
                         )
                 )

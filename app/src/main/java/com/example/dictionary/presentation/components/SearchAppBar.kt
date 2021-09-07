@@ -40,9 +40,6 @@ import com.example.dictionary.util.TAG
 fun SearchAppBar(
     onNavigateToSearchScreen: (String) -> Unit,
     route: String,
-    //query: String,
-    //onQueryChanged: (String) -> Unit,
-    //onExecuteSearch: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Surface(
@@ -66,7 +63,6 @@ fun SearchAppBar(
                 },
             value = "",
             onValueChange = {
-                //onQueryChanged(it)
             },
             label = {
                 Text(text = "Search", color = MaterialTheme.colors.onPrimary)
@@ -80,7 +76,6 @@ fun SearchAppBar(
             },
             keyboardActions = KeyboardActions(
                 onDone = {
-                    //onExecuteSearch()
                     keyboardController?.hide()
                 }
             ),

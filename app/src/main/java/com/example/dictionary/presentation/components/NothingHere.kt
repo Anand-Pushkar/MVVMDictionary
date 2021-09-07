@@ -14,19 +14,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun NothingHere(){
+fun NothingHere(
+    face: String = "¯\\_(ツ)_/¯",
+    text: String = "There's nothing here",
+){
     Box(
         modifier = Modifier.fillMaxSize()
     ){
-        Column(modifier = Modifier.align(Alignment.Center)){
+        Column(
+            modifier = Modifier
+                .padding(bottom = 50.dp)
+                .align(Alignment.Center)
+        ){
             Text(
                 modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally),
-                text = "¯\\_(ツ)_/¯",
+                text = face,
                 style = TextStyle(fontSize = 55.sp)
             )
             Text(
                 modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally),
-                text = "There's nothing here",
+                text = text,
                 style = MaterialTheme.typography.h4
             )
         }

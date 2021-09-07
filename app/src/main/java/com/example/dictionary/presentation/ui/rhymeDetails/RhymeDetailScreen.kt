@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.ui.rhymeDetails
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -23,8 +25,10 @@ import com.example.dictionary.presentation.components.SearchAppBar
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.TabTheme
 import com.example.dictionary.presentation.theme.YellowTheme
+import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailViewModel
 import com.example.dictionary.presentation.ui.util.DialogQueue
 import com.example.dictionary.util.RHYME
+import com.example.dictionary.util.TAG
 
 val isFavourite = mutableStateOf(false)
 
@@ -34,7 +38,9 @@ val isFavourite = mutableStateOf(false)
 fun RhymeDetailScreen(
     isDark: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
+    viewModel: RhymeDetailViewModel,
     onNavigateToSearchScreen: (String) -> Unit,
+    query: String
 ){
     val scaffoldState = rememberScaffoldState()
 
@@ -57,7 +63,8 @@ fun RhymeDetailScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 BgCard(
-                    onNavigateToSearchScreen = onNavigateToSearchScreen
+                    onNavigateToSearchScreen = onNavigateToSearchScreen,
+                    query = query
                 )
                 MainCard()
             }
@@ -70,8 +77,10 @@ fun RhymeDetailScreen(
 @Composable
 fun BgCard(
     onNavigateToSearchScreen: (String) -> Unit,
+    query: String
 ) {
 
+    Log.d(TAG, "BgCard: $query")
     Surface(
         color = MaterialTheme.colors.onPrimary,
         modifier = Modifier.fillMaxSize(),
@@ -88,8 +97,9 @@ fun BgCard(
             )
             Text(
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
-                text = "Yellow",
-                style = MaterialTheme.typography.h1
+                text = query,
+                style = MaterialTheme.typography.h1,
+                color = Color.Black // will change in the future
             )
 
             Row(

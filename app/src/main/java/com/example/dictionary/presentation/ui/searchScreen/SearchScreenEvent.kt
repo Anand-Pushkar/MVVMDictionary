@@ -1,8 +1,6 @@
 package com.example.dictionary.presentation.ui.searchScreen
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.text.input.TextFieldValue
-import java.time.format.TextStyle
 
 sealed class SearchScreenEvent {
 
@@ -13,4 +11,6 @@ sealed class SearchScreenEvent {
     data class OnTextFieldValueChanged(
         val tfv: TextFieldValue
     ): SearchScreenEvent()
+
+    object OnSearchCleared: SearchScreenEvent()
 }

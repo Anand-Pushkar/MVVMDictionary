@@ -1,18 +1,20 @@
 package com.example.dictionary.presentation.ui.searchScreen
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import com.example.dictionary.domain.model.searchSuggestion.SearchSuggestion
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.TabTheme
-import com.example.dictionary.util.TAG
 
 
 @ExperimentalMaterialApi
@@ -42,7 +43,6 @@ fun SearchScreen(
     viewModel: SearchViewModel
 ) {
 
-    val query = viewModel.query.value
     val textFieldValue = viewModel.textFieldValue.value
     val searchSuggestions = viewModel.searchSuggestions.value
     val scaffoldState = rememberScaffoldState()
@@ -54,7 +54,7 @@ fun SearchScreen(
         isNetworkAvailable = isNetworkAvailable,
         scaffoldState = scaffoldState,
         dialogQueue = dialogQueue.queue.value,
-        displayProgressBar = loading, // replace with loading
+        displayProgressBar = loading,
         selectedTab = parent
     ) {
         Scaffold(
@@ -67,7 +67,6 @@ fun SearchScreen(
             }
         ) {
 
-            val route = getRoute(parent = parent)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -75,27 +74,29 @@ fun SearchScreen(
             ) {
                 SearchSection(
                     onNavigateToDetailScreen = onNavigateToDetailScreen,
-                    route = route,
-                    query = query,
                     textFieldValue = textFieldValue,
                     onQueryChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnQueryChangedEvent(it))
                     },
                     onTextFieldValueChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnTextFieldValueChanged(it))
-                    }
+                    },
+                    onSearchCleared = {
+                        viewModel.onTriggerEvent(SearchScreenEvent.OnSearchCleared)
+                    },
+                    parent = parent.value,
                 )
                 SearchSuggestionsList(
                     loading = loading,
                     onNavigateToDetailScreen = onNavigateToDetailScreen,
-                    route = route,
                     searchSuggestions = searchSuggestions,
                     onQueryChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnQueryChangedEvent(it))
                     },
                     onTextFieldValueChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnTextFieldValueChanged(it))
-                    }
+                    },
+                    parent = parent.value,
                 )
             }
         }
@@ -106,11 +107,11 @@ fun SearchScreen(
 @Composable
 fun SearchSection(
     onNavigateToDetailScreen: (String) -> Unit,
-    route: String,
-    query: String,
     textFieldValue: TextFieldValue,
     onQueryChanged: (String) -> Unit,
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
+    onSearchCleared: () -> Unit,
+    parent: String,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -122,7 +123,6 @@ fun SearchSection(
         enabled = true,
         value = textFieldValue,
         onValueChange = {
-            Log.d(TAG, "SearchSection: ${it.text}")
             onQueryChanged(it.text)
             onTextFieldValueChanged(it)
         },
@@ -135,18 +135,41 @@ fun SearchSection(
         ),
         leadingIcon = {
             Icon(
-                Icons.Filled.Search,
+                imageVector = Icons.Filled.Search,
                 contentDescription = "Search Icon",
                 tint = MaterialTheme.colors.onPrimary
             )
         },
+        trailingIcon = {
+            if(textFieldValue.text.isNotEmpty()){
+                IconButton(
+                    onClick = {
+                        onSearchCleared()
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Clear,
+                        contentDescription = "Clear Search Icon",
+                        tint = MaterialTheme.colors.onPrimary
+                    )
+                }
+            }
+        },
         keyboardActions = KeyboardActions(
             onDone = {
-                //onExecuteSearch()
-                onNavigateToDetailScreen(route)
-                keyboardController?.hide()
+                // implement regex
+                if (textFieldValue.text != "") {
+                    val route = getRoute(
+                        parent = parent,
+                        query = textFieldValue.text.trim()
+                    )
+                    keyboardController?.hide()
+                    onNavigateToDetailScreen(route)
+
+                }
             }
         ),
+        singleLine = true,
         textStyle = MaterialTheme.typography.h4,
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.primary,
@@ -168,14 +191,13 @@ fun SearchSuggestionsList(
     onNavigateToDetailScreen: (String) -> Unit,
     onQueryChanged: (String) -> Unit,
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
-    route: String,
     searchSuggestions: List<SearchSuggestion>,
+    parent: String,
 ) {
     val scrollState = rememberLazyListState()
-    if(loading){
+    if (loading) {
         // maybe show shimmer animation but for now our theme will show a progress bar
-    }
-    else{
+    } else {
         // lazy column is put inside the else condition because we don't want to show anything while it is loading.
         LazyColumn(
             modifier = Modifier
@@ -191,7 +213,26 @@ fun SearchSuggestionsList(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(onClick = { /* todo */ })
+                        .clickable(onClick = {
+
+                            // this update the query
+                            onQueryChanged(item.word)
+
+                            // this update the cursor position
+                            onTextFieldValueChanged(
+                                TextFieldValue().copy(
+                                    text = item.word,
+                                    selection = TextRange(item.word.length)
+                                )
+                            )
+
+                            // pass the selected word with the route
+                            val route = getRoute(
+                                parent = parent,
+                                query = item.word
+                            )
+                            onNavigateToDetailScreen(route)
+                        })
                         .padding(
                             start = 16.dp,
                             top = 8.dp,
@@ -199,34 +240,21 @@ fun SearchSuggestionsList(
                             bottom = 8.dp
                         )
                         .wrapContentWidth(Alignment.Start)
-                        .selectable(
-                            selected = true,
-                            onClick = {
-                                onQueryChanged(item.word) // this update the query
-                                onTextFieldValueChanged(TextFieldValue().copy(
-                                    text = item.word,
-                                    selection = TextRange(item.word.length)
-                                ))
-                                // pass the selected word with the route
-                                onNavigateToDetailScreen(route)
-                            }
-                        )
                 )
             }
         }
     }
-
 }
 
-@Composable
 private fun getRoute(
-    parent: MutableState<String>
+    parent: String,
+    query: String,
 ): String {
     val route: String
-    if (parent.value == "definition") {
-        route = Screen.DEFINITION_DETAIL_ROUTE.route
-    } else if (parent.value == "rhyme") {
-        route = Screen.RHYME_DETAIL_ROUTE.route
+    if (parent == "definition") {
+        route = Screen.DEFINITION_DETAIL_ROUTE.withArgs(query)
+    } else if (parent == "rhyme") {
+        route = Screen.RHYME_DETAIL_ROUTE.withArgs(query)
     } else {
         route = Screen.DEFINITION_DETAIL_ROUTE.route
     }

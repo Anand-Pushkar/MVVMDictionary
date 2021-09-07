@@ -31,7 +31,6 @@ fun NavGraphBuilder.home(
     darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
     onboardingComplete: State<Boolean>,
     onToggleTheme: () -> Unit,
     onNavigateToDetailScreen: (String) -> Unit,

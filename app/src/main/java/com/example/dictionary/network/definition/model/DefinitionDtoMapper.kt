@@ -11,7 +11,7 @@ class DefinitionDtoMapper: DomainMapper<DefinitionDto, Definition> {
             score = model.score,
             numSyllables = model.numSyllables,
             tags = model.tags,
-            defs = model.defs
+            defs = model.defs,
         )
     }
 

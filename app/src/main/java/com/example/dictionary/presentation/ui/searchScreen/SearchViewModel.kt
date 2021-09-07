@@ -57,6 +57,10 @@ constructor(
                         setTextFieldValue(event.tfv)
                     }
 
+                    is OnSearchCleared -> {
+                        onSearchCleared()
+                    }
+
                 }
 
             }catch (e: Exception){
@@ -76,7 +80,9 @@ constructor(
         resetSearchState()
         if(query != ""){
             loading.value = true
-            searchSuggestions.value = getSearchSuggestionsFromNetwork(query)
+            if(this.query.value == query){
+                searchSuggestions.value = getSearchSuggestionsFromNetwork(query.trim())
+            }
             if(this.query.value != query){
                 resetSearchState()
             }
@@ -91,6 +97,15 @@ constructor(
                 searchQuery = query
             )
         )
+    }
+
+    private fun onSearchCleared(){
+        query.value = ""
+        textFieldValue.value = TextFieldValue(
+            text = query.value,
+            selection = TextRange(cursorPosition)
+        )
+        searchSuggestions.value = listOf()
     }
 
     private fun resetSearchState(){

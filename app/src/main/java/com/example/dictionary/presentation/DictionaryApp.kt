@@ -56,7 +56,7 @@ fun DictionaryApp(
 
         TabTheme(
             isDarkTheme = isDarkTheme,
-            isNetworkAvailable = mutableStateOf(true),
+            isNetworkAvailable = mutableStateOf(true), // we don't want to show multiple "no internet" messages
             scaffoldState = scaffoldState,
             dialogQueue = dialogQueue.queue.value, // replace with the reference created in the viewModel
             displayProgressBar = false, // replace with loading

@@ -165,11 +165,28 @@ fun SearchSection(
         keyboardActions = KeyboardActions(
             onDone = {
                 if (textFieldValue.text != "") {
+
+                    // hide the keyboard
+                    keyboardController?.hide()
+
+                    // this update the query
+                    onQueryChanged(textFieldValue.text.trim())
+
+                    // this update the cursor position
+                    onTextFieldValueChanged(
+                        TextFieldValue().copy(
+                            text = textFieldValue.text.trim(),
+                            selection = TextRange(textFieldValue.text.trim().length)
+                        )
+                    )
+
+                    // pass the selected word with the route
                     val route = getRoute(
                         parent = parent,
                         query = textFieldValue.text.trim()
                     )
-                    keyboardController?.hide()
+
+                    // navigate
                     onNavigateToDetailScreen(route)
                 }
             }
@@ -190,6 +207,7 @@ fun SearchSection(
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun SearchSuggestionsList(
     loading: Boolean,
@@ -200,6 +218,7 @@ fun SearchSuggestionsList(
     parent: String,
 ) {
     val scrollState = rememberLazyListState()
+    val keyboardController = LocalSoftwareKeyboardController.current
     if (loading) {
         LoadingListShimmer(
             cardHeight = 24.dp,
@@ -227,6 +246,9 @@ fun SearchSuggestionsList(
                         .fillMaxWidth()
                         .clickable(onClick = {
 
+                            // hide the keyboard
+                            keyboardController?.hide()
+
                             // this update the query
                             onQueryChanged(item.word)
 
@@ -243,6 +265,8 @@ fun SearchSuggestionsList(
                                 parent = parent,
                                 query = item.word
                             )
+
+                            // navigate
                             onNavigateToDetailScreen(route)
                         })
                         .padding(

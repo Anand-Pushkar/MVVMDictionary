@@ -77,14 +77,17 @@ constructor(
     }
 
     private suspend fun updateSearchSuggestions(query: String){
+        Log.d(TAG, "updateSearchSuggestions: query = $query")
         resetSearchState()
-        val sQuery = query.trim()
+        //val sQuery = query.trim()
+        //Log.d(TAG, "updateSearchSuggestions: sQuery = $sQuery")
+        Log.d(TAG, "updateSearchSuggestions: this.query.value = ${this.query.value}")
         if(query != ""){
             loading.value = true
-            if(this.query.value == sQuery){
-                searchSuggestions.value = getSearchSuggestionsFromNetwork(sQuery)
+            if(this.query.value == query){
+                searchSuggestions.value = getSearchSuggestionsFromNetwork(query.trim())
             }
-            if(this.query.value != sQuery){
+            if(this.query.value != query){
                 resetSearchState()
             }
             loading.value = false

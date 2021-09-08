@@ -167,7 +167,7 @@ fun SearchSection(
                 if (textFieldValue.text != "") {
                     val route = getRoute(
                         parent = parent,
-                        query = textFieldValue.text
+                        query = textFieldValue.text.trim()
                     )
                     keyboardController?.hide()
                     onNavigateToDetailScreen(route)

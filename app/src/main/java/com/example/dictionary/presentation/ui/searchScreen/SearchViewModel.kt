@@ -78,12 +78,13 @@ constructor(
 
     private suspend fun updateSearchSuggestions(query: String){
         resetSearchState()
+        val sQuery = query.trim()
         if(query != ""){
             loading.value = true
-            if(this.query.value == query){
-                searchSuggestions.value = getSearchSuggestionsFromNetwork(query.trim())
+            if(this.query.value == sQuery){
+                searchSuggestions.value = getSearchSuggestionsFromNetwork(sQuery)
             }
-            if(this.query.value != query){
+            if(this.query.value != sQuery){
                 resetSearchState()
             }
             loading.value = false

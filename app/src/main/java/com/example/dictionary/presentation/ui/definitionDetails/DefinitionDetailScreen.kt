@@ -28,8 +28,8 @@ import com.example.dictionary.presentation.components.NothingHere
 import com.example.dictionary.presentation.components.SearchAppBar
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
+import com.example.dictionary.util.SAD_FACE
 import com.example.dictionary.util.TAG
-import kotlinx.coroutines.delay
 import java.util.*
 
 val isFavourite = mutableStateOf(false)
@@ -86,6 +86,7 @@ fun DefinitionDetailScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     BgCard(
+                        isDark = isDark,
                         onNavigateToSearchScreen = onNavigateToSearchScreen,
                         def = definition,
                         loading = loading,
@@ -107,13 +108,14 @@ fun DefinitionDetailScreen(
 @ExperimentalComposeUiApi
 @Composable
 fun BgCard(
+    isDark: MutableState<Boolean>,
     loading: Boolean,
     onLoad: Boolean,
     onNavigateToSearchScreen: (String) -> Unit,
     def: Definition?,
 ) {
     Surface(
-        color = MaterialTheme.colors.onPrimary,
+        color = if(isDark.value){ Color.Black } else { MaterialTheme.colors.onPrimary },
         modifier = Modifier.fillMaxSize(),
         elevation = 8.dp,
     ) {
@@ -143,7 +145,6 @@ fun BgCard(
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                     text = "Invalid Search!",
                     style = MaterialTheme.typography.h1,
-                    color = Color.Black
                 )
             }
             else def?.let { def ->
@@ -154,7 +155,6 @@ fun BgCard(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                         text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                         style = MaterialTheme.typography.h1,
-                        color = Color.Black
                     )
 
                     Row(
@@ -165,15 +165,14 @@ fun BgCard(
                             .padding(vertical = 16.dp, horizontal = 24.dp)
                     ) {
                         Text(
-                            text = def.tags.get(0),
+                            text = def.tags[0],
                             style = MaterialTheme.typography.h5,
-                            color = Color.Black // will change in the future
                         )
 
                         val resource: Painter = if (isFavourite.value) {
                             painterResource(id = R.drawable.ic_star_red)
                         } else {
-                            painterResource(id = R.drawable.ic_star_border)
+                            painterResource(id = if(isDark.value){ R.drawable.ic_star_white_border } else { R.drawable.ic_star_black_border })
                         }
                         Image(
                             modifier = Modifier
@@ -195,7 +194,6 @@ fun BgCard(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                         text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                         style = MaterialTheme.typography.h1,
-                        color = Color.Black
                     )
                 }
 
@@ -265,7 +263,7 @@ fun MainCard(
                 }
             } else {
                 NothingHere(
-                    face = "(ಥ ͜ʖಥ)",
+                    face = SAD_FACE,
                     text = "Definition not found!"
                 )
             }

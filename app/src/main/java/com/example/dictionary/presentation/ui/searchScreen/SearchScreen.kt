@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.ui.searchScreen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,8 +29,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.domain.model.searchSuggestion.SearchSuggestion
+import com.example.dictionary.presentation.components.LoadingListShimmer
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.TabTheme
+import com.example.dictionary.util.TAG
 
 
 @ExperimentalMaterialApi
@@ -123,8 +126,12 @@ fun SearchSection(
         enabled = true,
         value = textFieldValue,
         onValueChange = {
-            onQueryChanged(it.text)
-            onTextFieldValueChanged(it)
+            if (it.text.trim() == "") {
+                onSearchCleared()
+            } else {
+                onQueryChanged(it.text)
+                onTextFieldValueChanged(it)
+            }
         },
         label = {
             Text(text = "Search", color = MaterialTheme.colors.onPrimary)
@@ -141,7 +148,7 @@ fun SearchSection(
             )
         },
         trailingIcon = {
-            if(textFieldValue.text.isNotEmpty()){
+            if (textFieldValue.text.isNotEmpty()) {
                 IconButton(
                     onClick = {
                         onSearchCleared()
@@ -157,15 +164,13 @@ fun SearchSection(
         },
         keyboardActions = KeyboardActions(
             onDone = {
-                // implement regex
                 if (textFieldValue.text != "") {
                     val route = getRoute(
                         parent = parent,
-                        query = textFieldValue.text.trim()
+                        query = textFieldValue.text
                     )
                     keyboardController?.hide()
                     onNavigateToDetailScreen(route)
-
                 }
             }
         ),
@@ -196,7 +201,14 @@ fun SearchSuggestionsList(
 ) {
     val scrollState = rememberLazyListState()
     if (loading) {
-        // maybe show shimmer animation but for now our theme will show a progress bar
+        LoadingListShimmer(
+            cardHeight = 24.dp,
+            cardWidth = 0.5f,
+            lineHeight = 24.dp,
+            lineWidth = 0.7f,
+            repetition = 10,
+            padding = 8.dp,
+        )
     } else {
         // lazy column is put inside the else condition because we don't want to show anything while it is loading.
         LazyColumn(

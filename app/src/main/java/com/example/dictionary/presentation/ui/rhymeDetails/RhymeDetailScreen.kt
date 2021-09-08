@@ -19,15 +19,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import com.example.dictionary.R
 import com.example.dictionary.presentation.components.SearchAppBar
 import com.example.dictionary.presentation.navigation.Screen
-import com.example.dictionary.presentation.theme.TabTheme
 import com.example.dictionary.presentation.theme.YellowTheme
-import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailViewModel
 import com.example.dictionary.presentation.ui.util.DialogQueue
-import com.example.dictionary.util.RHYME
 import com.example.dictionary.util.TAG
 
 val isFavourite = mutableStateOf(false)
@@ -63,6 +59,7 @@ fun RhymeDetailScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 BgCard(
+                    isDark = isDark,
                     onNavigateToSearchScreen = onNavigateToSearchScreen,
                     query = query
                 )
@@ -76,6 +73,7 @@ fun RhymeDetailScreen(
 @ExperimentalComposeUiApi
 @Composable
 fun BgCard(
+    isDark: MutableState<Boolean>,
     onNavigateToSearchScreen: (String) -> Unit,
     query: String
 ) {
@@ -117,7 +115,7 @@ fun BgCard(
                 val resource: Painter = if (isFavourite.value) {
                     painterResource(id = R.drawable.ic_star_red)
                 } else {
-                    painterResource(id = R.drawable.ic_star_border)
+                    painterResource(id = if(isDark.value){ R.drawable.ic_star_white_border } else { R.drawable.ic_star_black_border })
                 }
                 Image(
                     modifier = Modifier

@@ -39,6 +39,7 @@ fun ShimmerCardItem(
     Column(
         modifier = Modifier.padding(padding)
     ) {
+        // card
         Surface(
             shape = MaterialTheme.shapes.small,
             modifier = Modifier

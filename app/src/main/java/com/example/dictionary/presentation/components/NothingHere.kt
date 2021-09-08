@@ -12,10 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dictionary.util.SHRUG_FACE
 
 @Composable
 fun NothingHere(
-    face: String = "¯\\_(ツ)_/¯",
+    face: String = SHRUG_FACE,
     text: String = "There's nothing here",
 ){
     Box(

@@ -3,7 +3,6 @@ package com.example.dictionary.presentation.components
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -30,7 +29,7 @@ fun AnimatedHeartButton(
     val resource: Painter = if (isFavourite) {
         painterResource(id = R.drawable.ic_star_red)
     } else {
-        painterResource(id = R.drawable.ic_star_border)
+        painterResource(id = R.drawable.ic_star_black_border)
     }
 
     var sizeState by remember { mutableStateOf(expandedIconSize) }

@@ -1,6 +1,8 @@
 package com.example.dictionary.presentation.navigation
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -34,6 +36,8 @@ import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.composable
 
 
+@ExperimentalStdlibApi
+@RequiresApi(Build.VERSION_CODES.N)
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
@@ -213,6 +217,8 @@ fun NavGraphBuilder.definitionDetailScreen(
     }
 }
 
+@ExperimentalStdlibApi
+@RequiresApi(Build.VERSION_CODES.N)
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -267,6 +273,12 @@ fun NavGraphBuilder.rhymeDetailScreen(
                 isNetworkAvailable = isNetworkAvailable,
                 viewModel = viewModel,
                 onNavigateToSearchScreen = { route ->
+                    // In order to discard duplicated navigation events, we check the Lifecycle
+                    if (backStackEntry.lifecycleIsResumed()) {
+                        navController.navigate(route)
+                    }
+                },
+                onNavigationToDefinitionDetailScreen = { route ->
                     // In order to discard duplicated navigation events, we check the Lifecycle
                     if (backStackEntry.lifecycleIsResumed()) {
                         navController.navigate(route)

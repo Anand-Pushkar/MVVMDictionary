@@ -50,11 +50,11 @@ fun FavouriteCard(
             ) {
                 Text(
                     text = mainText,
-                    style = MaterialTheme.typography.h2,
+                    style = MaterialTheme.typography.h2.copy(color = MaterialTheme.colors.onPrimary),
                 )
                 Text(
                     text = secondaryText,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onPrimary),
                 )
             }
             Box(

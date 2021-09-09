@@ -58,7 +58,6 @@ fun NavGraphBuilder.home(
                 darkTheme = darkTheme,
                 isNetworkAvailable = isNetworkAvailable,
                 onToggleTheme = { onToggleTheme() },
-                onNavigateToDefinitionDetailScreen = onNavigateToDetailScreen,
                 onNavigateToSearchScreen = onNavigateToSearchScreen
             )
         }
@@ -76,7 +75,6 @@ fun NavGraphBuilder.home(
             darkTheme = darkTheme,
             isNetworkAvailable = isNetworkAvailable,
             onToggleTheme = { onToggleTheme() },
-            onNavigateToRhymeDetailScreen = onNavigateToDetailScreen,
             onNavigateToSearchScreen = onNavigateToSearchScreen
         )
     }

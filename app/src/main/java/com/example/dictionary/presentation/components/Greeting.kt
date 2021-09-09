@@ -35,11 +35,11 @@ fun GreetingSection(
         ) {
             Text(
                 text = "Good morning, $name",
-                style = MaterialTheme.typography.h2,
+                style = MaterialTheme.typography.h2.copy(color = MaterialTheme.colors.onPrimary),
             )
             Text(
                 text = "We wish you have a good day!",
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.onPrimary),
             )
         }
         // This icon can be used to change theme, or to navigate to settings screen, if we make one

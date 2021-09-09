@@ -28,6 +28,7 @@ import com.example.dictionary.presentation.components.NothingHere
 import com.example.dictionary.presentation.components.SearchAppBar
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
+import com.example.dictionary.util.DEFINITION
 import com.example.dictionary.util.SAD_FACE
 import com.example.dictionary.util.TAG
 import java.util.*
@@ -48,13 +49,12 @@ fun DefinitionDetailScreen(
     query: String
 ) {
 
-
     if(query.isEmpty()){
         Log.d(TAG, "DefinitionDetailScreen: query is empty")
         // show invalid search or something like that
     }
     else{
-        // fire a one-off event to get the recipe from api
+        // fire a one-off event to get the definitions from api
         val onLoad = viewModel.onLoad.value
         if (!onLoad) {
             viewModel.onLoad.value = true
@@ -126,7 +126,7 @@ fun BgCard(
         ) {
             SearchAppBar(
                 onNavigateToSearchScreen = onNavigateToSearchScreen,
-                route = Screen.SEARCH_SCREEN_ROUTE.withArgs("definition")
+                route = Screen.SEARCH_SCREEN_ROUTE.withArgs(DEFINITION)
             )
 
             if(loading && def == null){
@@ -144,7 +144,7 @@ fun BgCard(
                 Text(
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                     text = "Invalid Search!",
-                    style = MaterialTheme.typography.h1,
+                    style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onSecondary),
                 )
             }
             else def?.let { def ->
@@ -154,7 +154,7 @@ fun BgCard(
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                         text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                        style = MaterialTheme.typography.h1,
+                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onSecondary),
                     )
 
                     Row(
@@ -164,9 +164,11 @@ fun BgCard(
                             .fillMaxWidth()
                             .padding(vertical = 16.dp, horizontal = 24.dp)
                     ) {
+                        val pron = def.tags[1].substringAfter(":")
+
                         Text(
-                            text = def.tags[0],
-                            style = MaterialTheme.typography.h5,
+                            text = "IPA : [ $pron ]",
+                            style = MaterialTheme.typography.h5.copy(color = MaterialTheme.colors.onSecondary),
                         )
 
                         val resource: Painter = if (isFavourite.value) {
@@ -193,7 +195,7 @@ fun BgCard(
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                         text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                        style = MaterialTheme.typography.h1,
+                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onSecondary),
                     )
                 }
 
@@ -269,7 +271,6 @@ fun MainCard(
             }
         }
     }
-
 }
 
 
@@ -289,7 +290,7 @@ fun Section(
                 .fillMaxWidth()
                 .padding(8.dp),
             text = type,
-            style = MaterialTheme.typography.h3.copy(fontStyle = FontStyle.Italic)
+            style = MaterialTheme.typography.h3.copy(fontStyle = FontStyle.Italic, color = MaterialTheme.colors.onPrimary)
         )
 
         var index = 0
@@ -303,11 +304,11 @@ fun Section(
                     modifier = Modifier
                         .padding(end = 12.dp),
                     text = "${index + 1}",
-                    style = MaterialTheme.typography.h4
+                    style = MaterialTheme.typography.h4.copy(color = MaterialTheme.colors.onPrimary)
                 )
                 Text(
                     text = "${listItem}.",
-                    style = MaterialTheme.typography.h4
+                    style = MaterialTheme.typography.h4.copy(color = MaterialTheme.colors.onPrimary)
                 )
             }
             index += 1

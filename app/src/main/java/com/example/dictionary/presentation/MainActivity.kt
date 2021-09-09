@@ -1,8 +1,10 @@
 package com.example.dictionary.presentation
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -49,6 +51,8 @@ class MainActivity : ComponentActivity() {
         myConnectivityManager.unregisterConnectionObserver(this)
     }
 
+    @ExperimentalStdlibApi
+    @RequiresApi(Build.VERSION_CODES.N)
     @ExperimentalAnimationApi
     @ExperimentalMaterialApi
     @ExperimentalComposeUiApi

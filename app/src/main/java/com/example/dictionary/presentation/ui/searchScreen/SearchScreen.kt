@@ -192,7 +192,7 @@ fun SearchSection(
             }
         ),
         singleLine = true,
-        textStyle = MaterialTheme.typography.h4,
+        textStyle = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold),
         colors = TextFieldDefaults.textFieldColors(
             backgroundColor = MaterialTheme.colors.primary,
             focusedIndicatorColor = MaterialTheme.colors.secondary,

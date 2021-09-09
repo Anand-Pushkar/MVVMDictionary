@@ -3,6 +3,8 @@ package com.example.dictionary.presentation.ui.definitionDetails
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionary.domain.model.definition.Definition
@@ -23,7 +25,7 @@ constructor(
     val wordService: WordService,
 ) : ViewModel() {
 
-    var definitons: MutableState<List<Definition>?> = mutableStateOf(null)
+    val definitons: MutableState<List<Definition>?> = mutableStateOf(null)
     val definition: MutableState<Definition?> = mutableStateOf(null)
     val dialogQueue = DialogQueue()
     var loading = mutableStateOf(false)
@@ -49,8 +51,8 @@ constructor(
         loading.value = true
         definitons.value = getDefinitionsFromNetwork(sQuery)
         definitons.value?.forEach { def ->
-            if(def.word.equals(sQuery)){
-                definition.value = def
+            if(def.word.compareTo(sQuery.lowercase()) == 0){
+                 definition.value = def
             }
         }
         loading.value = false

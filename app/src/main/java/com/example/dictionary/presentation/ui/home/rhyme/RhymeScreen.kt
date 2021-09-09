@@ -26,7 +26,6 @@ fun RhymeScreen(
     darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
-    onNavigateToRhymeDetailScreen: (String) -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -64,7 +63,7 @@ fun RhymeScreen(
                 )
                 FavouriteCard(
                     color = MaterialTheme.colors.primaryVariant,
-                    mainText = "My Words",
+                    mainText = "My Rhymes",
                     secondaryText = "Favourite words show here",
                 )
             }

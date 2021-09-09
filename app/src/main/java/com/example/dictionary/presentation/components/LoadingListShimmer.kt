@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingListShimmer(
-    cardHeight: Dp,
+    cardHeight: Dp = 32.dp,
     cardWidth: Float = 1f,
     cardPadding: PaddingValues = PaddingValues(8.dp),
-    lineHeight: Dp,
+    lineHeight: Dp = 24.dp,
     padding: Dp = 16.dp,
     lines: Int = 1,
     repetition: Int = 1,

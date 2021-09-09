@@ -1,6 +1,11 @@
 package com.example.dictionary.domain.model.rhyme
 
 // rhyme business model
+
+data class Rhymes(
+    val mainWord: String,
+    val rhyme: List<Rhyme>?
+)
 data class Rhyme(
     val word: String,
     val score: Int,

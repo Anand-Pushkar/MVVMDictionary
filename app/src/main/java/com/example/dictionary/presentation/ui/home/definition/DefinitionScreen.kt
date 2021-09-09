@@ -33,7 +33,6 @@ fun DefinitionScreen(
     darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
-    onNavigateToDefinitionDetailScreen: (String) -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()

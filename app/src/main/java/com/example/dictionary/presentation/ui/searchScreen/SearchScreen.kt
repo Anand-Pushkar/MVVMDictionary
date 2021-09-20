@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.domain.model.searchSuggestion.SearchSuggestion
 import com.example.dictionary.presentation.components.LoadingListShimmer
+import com.example.dictionary.presentation.components.NothingHere
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.TabTheme
 import com.example.dictionary.util.TAG
@@ -46,11 +47,13 @@ fun SearchScreen(
     viewModel: SearchViewModel
 ) {
 
-    val textFieldValue = viewModel.textFieldValue.value
+    val textFieldValue = viewModel.textFieldValue
     val searchSuggestions = viewModel.searchSuggestions.value
+    val loading = viewModel.loading.value
     val scaffoldState = rememberScaffoldState()
     val dialogQueue = viewModel.dialogQueue
-    val loading = viewModel.loading.value
+
+    Log.d(TAG, "SearchScreen: ${textFieldValue.value.text}")
 
     TabTheme(
         isDarkTheme = isDark,
@@ -93,6 +96,7 @@ fun SearchScreen(
                     loading = loading,
                     onNavigateToDetailScreen = onNavigateToDetailScreen,
                     searchSuggestions = searchSuggestions,
+                    textFieldValue = textFieldValue,
                     onQueryChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnQueryChangedEvent(it))
                     },
@@ -110,7 +114,7 @@ fun SearchScreen(
 @Composable
 fun SearchSection(
     onNavigateToDetailScreen: (String) -> Unit,
-    textFieldValue: TextFieldValue,
+    textFieldValue: MutableState<TextFieldValue>,
     onQueryChanged: (String) -> Unit,
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
     onSearchCleared: () -> Unit,
@@ -124,11 +128,12 @@ fun SearchSection(
             .fillMaxWidth()
             .focusRequester(focusRequester),
         enabled = true,
-        value = textFieldValue,
+        value = textFieldValue.value,
         onValueChange = {
             if (it.text.trim() == "") {
                 onSearchCleared()
             } else {
+
                 onQueryChanged(it.text)
                 onTextFieldValueChanged(it)
             }
@@ -148,7 +153,7 @@ fun SearchSection(
             )
         },
         trailingIcon = {
-            if (textFieldValue.text.isNotEmpty()) {
+            if (textFieldValue.value.text.isNotEmpty()) {
                 IconButton(
                     onClick = {
                         onSearchCleared()
@@ -164,26 +169,26 @@ fun SearchSection(
         },
         keyboardActions = KeyboardActions(
             onDone = {
-                if (textFieldValue.text != "") {
+                if (textFieldValue.value.text != "") {
 
                     // hide the keyboard
                     keyboardController?.hide()
 
                     // this update the query
-                    onQueryChanged(textFieldValue.text.trim())
+                    onQueryChanged(textFieldValue.value.text.trim())
 
                     // this update the cursor position
                     onTextFieldValueChanged(
                         TextFieldValue().copy(
-                            text = textFieldValue.text.trim(),
-                            selection = TextRange(textFieldValue.text.trim().length)
+                            text = textFieldValue.value.text.trim(),
+                            selection = TextRange(textFieldValue.value.text.trim().length)
                         )
                     )
 
                     // pass the selected word with the route
                     val route = getRoute(
                         parent = parent,
-                        query = textFieldValue.text.trim()
+                        query = textFieldValue.value.text.trim()
                     )
 
                     // navigate
@@ -213,13 +218,16 @@ fun SearchSuggestionsList(
     loading: Boolean,
     onNavigateToDetailScreen: (String) -> Unit,
     onQueryChanged: (String) -> Unit,
+    textFieldValue: MutableState<TextFieldValue>,
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
-    searchSuggestions: List<SearchSuggestion>,
+    searchSuggestions: List<SearchSuggestion>?,
     parent: String,
 ) {
     val scrollState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    if (loading) {
+
+
+    if (loading && searchSuggestions == null) {
         LoadingListShimmer(
             cardHeight = 24.dp,
             cardWidth = 0.5f,
@@ -228,15 +236,22 @@ fun SearchSuggestionsList(
             repetition = 10,
             padding = 8.dp,
         )
-    } else {
-        // lazy column is put inside the else condition because we don't want to show anything while it is loading.
+    }
+    else if (!loading && searchSuggestions == null) { // this condition is the initial state of our search screen
+
+        if(textFieldValue.value.text.isNotEmpty()){
+            NothingHere()
+        }
+    }
+    else searchSuggestions?.let { ss ->
+
         LazyColumn(
             modifier = Modifier
                 .padding(top = 16.dp),
             state = scrollState
         ) {
             itemsIndexed(
-                items = searchSuggestions
+                items = ss
             ) { index: Int, item: SearchSuggestion ->
                 Text(
                     text = item.word,
@@ -279,6 +294,7 @@ fun SearchSuggestionsList(
                 )
             }
         }
+
     }
 }
 

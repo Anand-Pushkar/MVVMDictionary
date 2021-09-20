@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.plusAssign
+import com.example.dictionary.presentation.components.SplashScreen
 import com.example.dictionary.presentation.components.bottomNavigationComponent.DictionaryBottomBar
 import com.example.dictionary.presentation.navigation.NavGraph
 import com.example.dictionary.presentation.theme.TabTheme
@@ -42,13 +43,16 @@ import com.google.accompanist.navigation.animation.navigation
 @ExperimentalFoundationApi
 @Composable
 fun DictionaryApp(
+    showSplashScreen: MutableState<Boolean>,
     isDarkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
     finishActivity: () -> Unit,
     setOnboardingComplete: () -> Unit,
-    onboardingComplete: State<Boolean>,
+    onboardingComplete: MutableState<Boolean>,
+    startDestination: String,
 ) {
+    Log.d(TAG, "DictionaryApp: ===============================================")
     ProvideWindowInsets {
         val tabs = remember { HomeTabs.values() }
         val navController = rememberAnimatedNavController()
@@ -70,7 +74,6 @@ fun DictionaryApp(
                 modifier = Modifier
                     .fillMaxSize(),
                 backgroundColor = MaterialTheme.colors.primary,
-                bottomBar = { DictionaryBottomBar(navController = navController, tabs = tabs) },
                 scaffoldState = scaffoldState,
                 snackbarHost = {
                     scaffoldState.snackbarHostState
@@ -82,9 +85,9 @@ fun DictionaryApp(
                     finishActivity = finishActivity,
                     onToggleTheme = { onToggleTheme() },
                     navController = navController,
-                    modifier = Modifier.padding(0.dp),
                     setOnboardingComplete = setOnboardingComplete,
                     onboardingComplete = onboardingComplete,
+                    startDestination = startDestination
                 )
             }
         }

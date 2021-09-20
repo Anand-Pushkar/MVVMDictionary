@@ -34,6 +34,7 @@ fun DefinitionScreen(
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
+    navController: NavHostController,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -49,6 +50,7 @@ fun DefinitionScreen(
             modifier = Modifier
                 .fillMaxSize(),
             backgroundColor = MaterialTheme.colors.primary,
+            bottomBar = { DictionaryBottomBar(navController = navController, tabs = tabs) },
             topBar = {
                 GreetingSection(
                     isNetworkAvailable = isNetworkAvailable,

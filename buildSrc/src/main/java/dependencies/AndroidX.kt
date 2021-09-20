@@ -4,6 +4,7 @@ package dependencies
 object AndroidX {
 
   const val core_ktx = "androidx.core:core-ktx:${Version.core_ktx}"
+  const val core_splash_screen = "androidx.core:core-splashscreen:${Version.core_splash_screen}"
   const val app_compat = "androidx.appcompat:appcompat:${Version.app_compat}"
   const val constraint_layout = "androidx.constraintlayout:constraintlayout:${Version.constraint_layout}"
   const val ui_tooling = "androidx.ui:ui-tooling:${Version.androidx_ui}"

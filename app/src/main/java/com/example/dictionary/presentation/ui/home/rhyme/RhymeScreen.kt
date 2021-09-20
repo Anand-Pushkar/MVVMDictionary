@@ -7,7 +7,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.dictionary.presentation.components.FavouriteCard
 import com.example.dictionary.presentation.components.GreetingSection
@@ -27,6 +26,7 @@ fun RhymeScreen(
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
+    navController: NavHostController,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -42,6 +42,7 @@ fun RhymeScreen(
             modifier = Modifier
                 .fillMaxSize(),
             backgroundColor = MaterialTheme.colors.primary,
+            bottomBar = { DictionaryBottomBar(navController = navController, tabs = tabs) },
             topBar = {
                 GreetingSection(
                     isNetworkAvailable = isNetworkAvailable,

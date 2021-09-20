@@ -1,10 +1,10 @@
 package dependencies
 
 object Version{
-    const val compileSdk = 30
+    const val compileSdk = 31
     const val buildTools = "30.0.3"
-    const val minSdk = 21
-    const val targetSdk = 30
+    const val minSdk = 24
+    const val targetSdk = 31
     const val versionCode = 1
     const val versionName = "1.0"
     const val jvmTarget = "1.8"
@@ -19,11 +19,12 @@ object Version{
     const val kotlin_compiler_extension = "1.0.0"
 
     const val core_ktx = "1.3.2"
+    const val core_splash_screen = "1.0.0-alpha01"
     const val app_compat = "1.3.0-beta01"
     const val material = "1.3.0"
     const val constraint_layout = "2.0.4"
     const val androidx_ui = "1.0.0-alpha07"
-    const val compose = "1.0.0"
+    const val compose = "1.0.0-rc02"
     const val compose_constraint = "1.0.0-beta02"
     const val compose_activity = "1.3.1"
     const val hilt_lifecycle_viewmodel = "1.0.0-beta01"

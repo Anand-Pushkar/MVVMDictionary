@@ -262,6 +262,13 @@ fun MainCard(
                             }
                         }
                     }
+                    def.adverbs?.let { adverbs ->
+                        if(adverbs.isNotEmpty()){
+                            item {
+                                Section(type = "adverb", list = adverbs)
+                            }
+                        }
+                    }
                 }
             } else {
                 NothingHere(

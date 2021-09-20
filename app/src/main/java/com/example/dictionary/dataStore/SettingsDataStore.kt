@@ -1,6 +1,7 @@
 package com.example.dictionary.dataStore
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -31,11 +32,20 @@ constructor(
 
     init {
         Log.d(TAG, ": dataStore init")
+        Log.d(TAG, ": ")
         observeDataStore()
     }
 
-    val onboardingComplete = mutableStateOf(false)
-    val isDark = mutableStateOf(true)
+    val showSplashScreen = mutableStateOf(true)
+    private val onboardingComplete = mutableStateOf(false)
+    private val isDark = mutableStateOf(false)
+
+    fun getOnboardingCompleteValue(): MutableState<Boolean>{
+        return onboardingComplete
+    }
+    fun getIsDarkValue(): MutableState<Boolean>{
+        return isDark
+    }
 
     fun toggleTheme(){
         scope.launch {
@@ -59,13 +69,19 @@ constructor(
 
         datastore.data.onEach { preferences ->
 
+            showSplashScreen.value = true // just to be double sure
+
             preferences[DARK_THEME_KEY]?.let { isDarkTheme ->
+                Log.d(TAG, "observeDataStore: isDarkTheme = ${isDarkTheme}")
                 isDark.value = isDarkTheme
             }
 
             preferences[ONBOARDING_KEY]?.let { isOnboardingComplete ->
+                Log.d(TAG, "observeDataStore: isOnboardingComplete = ${isOnboardingComplete}")
                 onboardingComplete.value = isOnboardingComplete
             }
+
+            showSplashScreen.value = false
 
         }.launchIn(scope)
 

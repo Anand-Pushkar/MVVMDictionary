@@ -31,11 +31,9 @@ fun NavGraphBuilder.home(
     darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     navController: NavHostController,
-    onboardingComplete: State<Boolean>,
+    onboardingComplete: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
-    onNavigateToDetailScreen: (String) -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
-    width: Int
 ) {
     composable(
         route = HomeTabs.DEFINITION.route,
@@ -47,18 +45,19 @@ fun NavGraphBuilder.home(
         }
     ) {
         // Show onboarding instead if not shown yet.
-        LaunchedEffect(onboardingComplete) {
-            if (!onboardingComplete.value) {
-                Log.d(TAG, "home: hello, going to onboarding route")
-                navController.navigate(Screen.ONBOARDING_ROUTE.route)
-            }
-        }
+//        LaunchedEffect(onboardingComplete) {
+//            if (!onboardingComplete.value) {
+//                Log.d(TAG, "home: hello, going to onboarding route")
+//                navController.navigate(Screen.ONBOARDING_ROUTE.route)
+//            }
+//        }
         if (onboardingComplete.value) { // Avoid glitch when showing onboarding
             DefinitionScreen(
                 darkTheme = darkTheme,
                 isNetworkAvailable = isNetworkAvailable,
                 onToggleTheme = { onToggleTheme() },
-                onNavigateToSearchScreen = onNavigateToSearchScreen
+                onNavigateToSearchScreen = onNavigateToSearchScreen,
+                navController = navController
             )
         }
     }
@@ -75,7 +74,8 @@ fun NavGraphBuilder.home(
             darkTheme = darkTheme,
             isNetworkAvailable = isNetworkAvailable,
             onToggleTheme = { onToggleTheme() },
-            onNavigateToSearchScreen = onNavigateToSearchScreen
+            onNavigateToSearchScreen = onNavigateToSearchScreen,
+            navController = navController
         )
     }
 }

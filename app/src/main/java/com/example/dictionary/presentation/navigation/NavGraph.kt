@@ -1,6 +1,7 @@
 package com.example.dictionary.presentation.navigation
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.Lifecycle
@@ -29,10 +29,10 @@ import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailScreen
 import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailViewModel
 import com.example.dictionary.presentation.ui.searchScreen.SearchScreen
 import com.example.dictionary.presentation.ui.searchScreen.SearchViewModel
+import com.example.dictionary.util.TAG
 
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 //import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.composable
 
 
@@ -45,14 +45,14 @@ import com.google.accompanist.navigation.animation.composable
 fun NavGraph(
     darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
-    modifier: Modifier = Modifier,
     onToggleTheme: () -> Unit,
     finishActivity: () -> Unit = {},
     navController: NavHostController = rememberAnimatedNavController(),
-    startDestination: String = Screen.HOME_ROUTE.route,
     setOnboardingComplete: () -> Unit,
-    onboardingComplete: State<Boolean>,
+    onboardingComplete: MutableState<Boolean>,
+    startDestination: String,
 ) {
+    Log.d(TAG, "NavGraph: onboardingComplete = ${onboardingComplete.value}")
     BoxWithConstraints {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val actions = remember(navController) { MainActions(navController) }
@@ -63,7 +63,6 @@ fun NavGraph(
         ) {
 
             onBoardingScreen(
-                darkTheme = darkTheme,
                 isNetworkAvailable = isNetworkAvailable,
                 navController = navController,
                 finishActivity = finishActivity,
@@ -80,14 +79,9 @@ fun NavGraph(
                     navController = navController,
                     onboardingComplete = onboardingComplete,
                     onToggleTheme = { onToggleTheme() },
-                    onNavigateToDetailScreen = { route ->
-                        navBackStackEntry?.let { actions.openDetailScreen(route, it) }
-                    },
-
                     onNavigateToSearchScreen = { route ->
                         navBackStackEntry?.let { actions.openSearchScreen(route, it) }
                     },
-                    width = constraints.maxWidth
                 )
             }
 
@@ -120,7 +114,6 @@ fun NavGraph(
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 fun NavGraphBuilder.onBoardingScreen(
-    darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     navController: NavHostController,
     finishActivity: () -> Unit = {},
@@ -138,14 +131,13 @@ fun NavGraphBuilder.onBoardingScreen(
         }
 
         Onboarding(
-            darkTheme = darkTheme.value,
-            isNetworkAvailable = isNetworkAvailable,
-            onboardingComplete = {
-                // Set the flag so that onboarding is not shown next time, flag is stored in dataStore.
-                setOnboardingComplete()
-                navController.popBackStack()
-            }
-        )
+            isNetworkAvailable = isNetworkAvailable
+        ) {
+            // Set the flag so that onboarding is not shown next time, flag is stored in dataStore.
+            Log.d(TAG, "onBoardingScreen: setting onboarding complete")
+            setOnboardingComplete()
+            navController.popBackStack()
+        }
     }
 }
 

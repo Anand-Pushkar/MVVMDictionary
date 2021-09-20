@@ -15,6 +15,9 @@
         <item name="android:navigationBarColor">@color/transparent</item>
     </style>
 
+
+
+    <!-- app theme -->
     <style name="Theme.Dictionary.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

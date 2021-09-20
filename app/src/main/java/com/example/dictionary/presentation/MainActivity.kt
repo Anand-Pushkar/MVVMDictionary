@@ -2,6 +2,7 @@ package com.example.dictionary.presentation
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -10,6 +11,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.ExperimentalComposeUiApi
+//import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.example.dictionary.dataStore.SettingsDataStore
 import com.example.dictionary.domain.model.definition.Definition
@@ -17,7 +19,10 @@ import com.example.dictionary.domain.model.rhyme.Rhyme
 import com.example.dictionary.network.WordService
 import com.example.dictionary.network.definition.model.DefinitionDtoMapper
 import com.example.dictionary.network.rhyme.model.RhymeDtoMapper
+import com.example.dictionary.presentation.components.SplashScreen
+import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.util.MyConnectivityManager
+import com.example.dictionary.util.TAG
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Named
@@ -30,15 +35,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
-
-    @Inject
-    lateinit var service: WordService
-
-    @Inject
-    lateinit var dmapper: DefinitionDtoMapper
-
-    @Inject
-    lateinit var rmapper: RhymeDtoMapper
 
 
     override fun onStart() {
@@ -59,32 +55,45 @@ class MainActivity : ComponentActivity() {
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //val splashScreen = installSplashScreen()
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
-            DictionaryApp(
-                isDarkTheme = settingsDataStore.isDark,
-                isNetworkAvailable = myConnectivityManager.isNetworkAvailable,
-                onToggleTheme = { settingsDataStore.toggleTheme() },
-                finishActivity = { finish() },
-                setOnboardingComplete = { settingsDataStore::setOnboardingComplete },
-                onboardingComplete = settingsDataStore.onboardingComplete
-            )
+            if(settingsDataStore.showSplashScreen.value){
+                SplashScreen()
+            } else{
+                val isDark = settingsDataStore.getIsDarkValue()
+                val onboardingComplete = settingsDataStore.getOnboardingCompleteValue()
+                val startDestination = getStartDestination(onboardingComplete.value)
+
+                DictionaryApp(
+                    showSplashScreen = settingsDataStore.showSplashScreen,
+                    isDarkTheme = isDark,
+                    isNetworkAvailable = myConnectivityManager.isNetworkAvailable,
+                    onToggleTheme = { settingsDataStore.toggleTheme() },
+                    finishActivity = { finish() },
+                    setOnboardingComplete = { settingsDataStore.setOnboardingComplete() },
+                    onboardingComplete = onboardingComplete,
+                    startDestination = startDestination
+                )
+            }
+
+        }
+
+        //splashScreen.setKeepVisibleCondition{ settingsDataStore.showSplashScreen.value }
+    }
+
+    private fun getStartDestination(onboardingComplete: Boolean): String {
+
+        return if(onboardingComplete){
+            Log.d(TAG, "getStartDestination: ${Screen.HOME_ROUTE.route}")
+            Screen.HOME_ROUTE.route
+        }else{
+            Log.d(TAG, "getStartDestination: ${Screen.ONBOARDING_ROUTE.route}")
+            Screen.ONBOARDING_ROUTE.route
         }
     }
 
-    private suspend fun getDefinitionsFromNetwork(): List<Definition>{
-        return dmapper.toDomainList(
-            service.getDefinitions(
-                searchQuery = "honesty"
-            )
-        )
-    }
-
-    private suspend fun getRhymesFromNetwork(): List<Rhyme>{
-        return rmapper.toDomainList(
-            service.getRhymes(
-                searchQuery = "honest"
-            )
-        )
-    }
 }

@@ -16,8 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.example.dictionary.R
-import com.example.dictionary.presentation.navigation.Screen
-import com.example.dictionary.presentation.theme.DictionaryTheme
 import com.example.dictionary.presentation.theme.PinkTheme
 import com.example.dictionary.presentation.ui.util.DialogQueue
 import com.example.dictionary.util.TAG
@@ -27,11 +25,11 @@ import com.google.accompanist.insets.statusBarsPadding
 @ExperimentalMaterialApi
 @Composable
 fun Onboarding(
-    darkTheme: Boolean,
     isNetworkAvailable: MutableState<Boolean>,
     onboardingComplete: () -> Unit,
 ) {
     val scaffoldState = rememberScaffoldState()
+    Log.d(TAG, "Onboarding: hello")
 
     PinkTheme(
         isNetworkAvailable = isNetworkAvailable,
@@ -49,7 +47,9 @@ fun Onboarding(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
+                        Log.d(TAG, "Onboarding: FAB onclick")
                         onboardingComplete()
+
                     },
                     modifier = Modifier
                         .navigationBarsPadding()
@@ -108,9 +108,7 @@ private fun AppBar() {
 @Composable
 private fun OnboardingPreview() {
     Onboarding(
-        darkTheme = false,
-        isNetworkAvailable = mutableStateOf(true),
-        onboardingComplete = {}
-    )
+        isNetworkAvailable = mutableStateOf(true)
+    ) {}
 }
 

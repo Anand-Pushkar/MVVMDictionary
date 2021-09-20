@@ -69,6 +69,7 @@ android {
 dependencies {
 
     implementation AndroidX.core_ktx
+    implementation AndroidX.core_splash_screen
     implementation AndroidX.app_compat
     implementation AndroidX.constraint_layout
     implementation AndroidX.ui_tooling

@@ -24,10 +24,9 @@ fun DictionaryBottomBar(
 ) {
 
     val routes = remember { HomeTabs.values().map { it.route } }
-    val currentRoute = currentTabRoute(navController = navController)
+    val currentTabRoute = currentTabRoute(navController = navController)
 
-    Log.d(TAG, "DictionaryBottomBar: $currentRoute")
-    if (currentRoute.value in routes) {
+    if (currentTabRoute.value in routes) {
         BottomNavigation(
             modifier = Modifier
                 .navigationBarsHeight(additional = 60.dp),
@@ -50,9 +49,9 @@ fun DictionaryBottomBar(
                             style = MaterialTheme.typography.h5
                         )
                     },
-                    selected = currentRoute.value == tab.route,
+                    selected = currentTabRoute.value == tab.route,
                     onClick = {
-                        if (tab.route != currentRoute.value) {
+                        if (tab.route != currentTabRoute.value) {
                             navController.navigate(tab.route) {
                                 Log.d(TAG, "DictionaryBottomBar: ${navController.graph.startDestinationId}")
                                 Log.d(TAG, "DictionaryBottomBar: ${navController.graph.nodes}")

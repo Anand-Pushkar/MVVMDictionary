@@ -16,6 +16,8 @@ import com.example.dictionary.presentation.ui.searchScreen.SearchScreenEvent.*
 import com.example.dictionary.presentation.ui.util.DialogQueue
 import com.example.dictionary.util.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,7 +32,7 @@ constructor(
 
 ) : ViewModel() {
 
-    val searchSuggestions: MutableState<List<SearchSuggestion>> = mutableStateOf(listOf())
+    val searchSuggestions: MutableState<List<SearchSuggestion>?> = mutableStateOf(null)
     val query = mutableStateOf("")
     val initialCursorPosition: MutableState<Int> = mutableStateOf(0)
     val cursorPosition = initialCursorPosition.value.takeIf { it <= query.value.length } ?: query.value.length
@@ -70,29 +72,50 @@ constructor(
     }
 
 
-    private suspend fun onQueryChanged(query: String) {
+    private fun onQueryChanged(query: String) {
         setQuery(query)
-        updateSearchSuggestions(query)
-
+        updateSearchSuggestions(this.query.value)
     }
 
-    private suspend fun updateSearchSuggestions(query: String){
-        Log.d(TAG, "updateSearchSuggestions: query = $query")
+    private fun updateSearchSuggestions(query: String){
         resetSearchState()
-        //val sQuery = query.trim()
-        //Log.d(TAG, "updateSearchSuggestions: sQuery = $sQuery")
-        Log.d(TAG, "updateSearchSuggestions: this.query.value = ${this.query.value}")
-        if(query != ""){
-            loading.value = true
-            if(this.query.value == query){
-                searchSuggestions.value = getSearchSuggestionsFromNetwork(query.trim())
-            }
-            if(this.query.value != query){
-                resetSearchState()
-            }
-            loading.value = false
-        }
 
+        if(query.isNotEmpty()){
+            updateSearchSuggestion.execute(
+                query = query.trim()
+            ).onEach { dataState ->
+
+                // if dataState.data is null, this will make loading = true
+                if(dataState.data == null){
+                    loading.value = dataState.loading
+                }
+
+
+                // data
+                dataState.data?.let { ss ->
+
+                    // check if query has changed
+                    if(this.query.value != query){
+                        // if the value of query has changed
+                        if(this.query.value.isEmpty()){
+                            loading.value = dataState.loading
+                        }
+                    }else{
+                        // if query has not changed, put values in searchSuggestions
+                        if(ss.isNotEmpty()){
+                            searchSuggestions.value = ss
+                        }
+                        loading.value = dataState.loading
+                    }
+                }
+
+                //error
+                dataState.error?.let { error ->
+                    dialogQueue.appendErrorMessage("Error", error)
+                }
+
+            }.launchIn(viewModelScope)
+        }
     }
 
     private suspend fun getSearchSuggestionsFromNetwork(query: String): List<SearchSuggestion>{
@@ -109,11 +132,11 @@ constructor(
             text = query.value,
             selection = TextRange(cursorPosition)
         )
-        searchSuggestions.value = listOf()
+        searchSuggestions.value = null
     }
 
     private fun resetSearchState(){
-        searchSuggestions.value = listOf()
+        searchSuggestions.value = null
     }
 
     private fun setQuery(query: String) {

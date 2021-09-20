@@ -15,6 +15,7 @@ data class Definition(
     var nouns: MutableList<String>? = mutableListOf()
     var verbs: MutableList<String>? = mutableListOf()
     var adjectives: MutableList<String>? = mutableListOf()
+    var adverbs: MutableList<String>? = mutableListOf()
 
     init {
         setLists()
@@ -33,14 +34,17 @@ data class Definition(
                 }
             }
 
-            if(type.equals("n")){
+            if(type.compareTo("n") == 0){
                 nouns?.add(def)
             }
-            if(type.equals("v")){
+            if(type.compareTo("v") == 0){
                 verbs?.add(def)
             }
-            if(type.equals("adj")){
+            if(type.compareTo("adj") == 0){
                 adjectives?.add(def)
+            }
+            if(type.compareTo("adv") == 0){
+                adverbs?.add(def)
             }
         }
     }

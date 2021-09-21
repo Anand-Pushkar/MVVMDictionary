@@ -1,7 +1,11 @@
 package com.example.dictionary.di
 
-import com.example.dictionary.interactors.search_screen.UpdateSearchSuggestion
+import com.example.dictionary.interactors.definition_detail_screen.GetDefinitions
+import com.example.dictionary.interactors.rhyme_detail_screen.GetRhymes
+import com.example.dictionary.interactors.search_screen.UpdateSearchSuggestions
 import com.example.dictionary.network.WordService
+import com.example.dictionary.network.definition.model.DefinitionDtoMapper
+import com.example.dictionary.network.rhyme.model.RhymeDtoMapper
 import com.example.dictionary.network.searchSuggestions.model.SearchSuggestionDtoMapper
 import dagger.Module
 import dagger.Provides
@@ -15,16 +19,37 @@ object InteractorsModule {
 
     @ViewModelScoped
     @Provides
-    fun provideUpdateSearchSuggestion(
+    fun provideUpdateSearchSuggestions(
         dtoMapper: SearchSuggestionDtoMapper,
         wordService: WordService
-    ): UpdateSearchSuggestion {
-        return UpdateSearchSuggestion(
+    ): UpdateSearchSuggestions {
+        return UpdateSearchSuggestions(
             dtoMapper = dtoMapper,
             wordService = wordService
         )
     }
 
+    @ViewModelScoped
+    @Provides
+    fun provideGetDefinitions(
+        dtoMapper: DefinitionDtoMapper,
+        wordService: WordService
+    ): GetDefinitions {
+        return GetDefinitions(
+            dtoMapper = dtoMapper,
+            wordService = wordService
+        )
+    }
 
-
+    @ViewModelScoped
+    @Provides
+    fun provideGetRhymes(
+        dtoMapper: RhymeDtoMapper,
+        wordService: WordService,
+    ): GetRhymes {
+        return GetRhymes(
+            dtoMapper = dtoMapper,
+            wordService = wordService
+        )
+    }
 }

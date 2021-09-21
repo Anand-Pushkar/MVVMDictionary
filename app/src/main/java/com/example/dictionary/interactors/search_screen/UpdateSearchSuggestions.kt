@@ -10,31 +10,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.delay
 
-class UpdateSearchSuggestion(
+class UpdateSearchSuggestions(
     val dtoMapper: SearchSuggestionDtoMapper,
     val wordService: WordService
 ){
     fun execute(
-        query: String
+        query: String,
+        isNetworkAvailable: Boolean,
     ): Flow<DataState<List<SearchSuggestion>>> = flow{
 
-        Log.d(TAG, "execute: ${query}")
         try {
             emit(DataState.loading())
 
-            var searchSuggestions = getSearchSuggestionsFromNetwork(query)
+            if(isNetworkAvailable){
+                var searchSuggestions = getSearchSuggestionsFromNetwork(query)
 
-            if(searchSuggestions.isNotEmpty()){
-                emit(DataState.success(searchSuggestions))
-            } else{
-                // if the list is empty then wait for 1.5 seconds, the data might be late,
-                // if the list is still empty after 1.5 seconds try 1 more time and then emit
-                delay(1500)
-                searchSuggestions = getSearchSuggestionsFromNetwork(query)
-                delay(500)
-                emit(DataState.success(searchSuggestions))
+                if(searchSuggestions.isNotEmpty()){
+                    emit(DataState.success(searchSuggestions))
+                } else{
+                    // if the list is empty then wait for 1 second, the data might be late,
+                    // if the list is still empty after 1 second try 1 more time and then emit
+                    delay(1000)
+                    searchSuggestions = getSearchSuggestionsFromNetwork(query)
+                    delay(1000)
+                    emit(DataState.success(searchSuggestions))
+                }
             }
-
 
         }catch (e: Exception){
             Log.e(TAG, "execute: ${e.message}")

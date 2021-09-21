@@ -53,8 +53,6 @@ fun SearchScreen(
     val scaffoldState = rememberScaffoldState()
     val dialogQueue = viewModel.dialogQueue
 
-    Log.d(TAG, "SearchScreen: ${textFieldValue.value.text}")
-
     TabTheme(
         isDarkTheme = isDark,
         isNetworkAvailable = isNetworkAvailable,

@@ -7,11 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionary.domain.model.rhyme.Rhyme
 import com.example.dictionary.domain.model.rhyme.Rhymes
+import com.example.dictionary.interactors.rhyme_detail_screen.GetRhymes
 import com.example.dictionary.network.WordService
 import com.example.dictionary.network.rhyme.model.RhymeDtoMapper
 import com.example.dictionary.presentation.ui.util.DialogQueue
+import com.example.dictionary.presentation.util.MyConnectivityManager
 import com.example.dictionary.util.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,8 +23,8 @@ import javax.inject.Inject
 class RhymeDetailViewModel
 @Inject
 constructor(
-    val dtoMapper: RhymeDtoMapper,
-    val wordService: WordService,
+    val getRhymes: GetRhymes,
+    private val myConnectivityManager: MyConnectivityManager,
 ) : ViewModel() {
 
     val rhymes: MutableState<Rhymes?> = mutableStateOf(null)
@@ -47,23 +51,29 @@ constructor(
     }
 
     @ExperimentalStdlibApi
-    private suspend fun getRhymes(sQuery: String){
-        loading.value = true
-        rhymeList.value = getRhymesFromNetwork(sQuery).sortedBy { it.numSyllables } // sort in ascending order of numSyllables
-        rhymes.value = Rhymes(
-            mainWord = sQuery,
-            rhyme = rhymeList.value
-        )
-        rhymesMap.value = getRhymesMap(rhymes.value)
-        loading.value = false
-    }
+    private fun getRhymes(sQuery: String){
 
-    private suspend fun getRhymesFromNetwork(sQuery: String): List<Rhyme>{
-        return dtoMapper.toDomainList(
-            wordService.getRhymes(
-                searchQuery = sQuery
-            )
-        )
+        getRhymes.execute(
+            query = sQuery,
+            isNetworkAvailable = myConnectivityManager.isNetworkAvailable.value
+        ).onEach { dataState ->
+
+            // loading
+            loading.value = dataState.loading
+
+            // data
+            dataState.data?.let {
+
+                rhymeList.value = it.sortedBy { it.numSyllables } // sort in ascending order of numSyllables
+                rhymes.value = Rhymes(
+                    mainWord = sQuery,
+                    rhyme = rhymeList.value
+                )
+                rhymesMap.value = getRhymesMap(rhymes.value)
+            }
+
+        }.launchIn(viewModelScope)
+
     }
 
     @ExperimentalStdlibApi

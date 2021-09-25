@@ -52,7 +52,7 @@ fun NavGraph(
     onboardingComplete: MutableState<Boolean>,
     startDestination: String,
 ) {
-    Log.d(TAG, "NavGraph: onboardingComplete = ${onboardingComplete.value}")
+
     BoxWithConstraints {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val actions = remember(navController) { MainActions(navController) }
@@ -134,7 +134,6 @@ fun NavGraphBuilder.onBoardingScreen(
             isNetworkAvailable = isNetworkAvailable
         ) {
             // Set the flag so that onboarding is not shown next time, flag is stored in dataStore.
-            Log.d(TAG, "onBoardingScreen: setting onboarding complete")
             setOnboardingComplete()
             navController.popBackStack()
         }

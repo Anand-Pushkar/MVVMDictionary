@@ -44,13 +44,7 @@ fun NavGraphBuilder.home(
             fadeIn(animationSpec = tween(300))
         }
     ) {
-        // Show onboarding instead if not shown yet.
-//        LaunchedEffect(onboardingComplete) {
-//            if (!onboardingComplete.value) {
-//                Log.d(TAG, "home: hello, going to onboarding route")
-//                navController.navigate(Screen.ONBOARDING_ROUTE.route)
-//            }
-//        }
+
         if (onboardingComplete.value) { // Avoid glitch when showing onboarding
             DefinitionScreen(
                 darkTheme = darkTheme,

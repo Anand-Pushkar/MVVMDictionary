@@ -14,4 +14,22 @@
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor">@color/transparent</item>
     </style>
+
+    <!-- splash screen theme -->
+    <style name="Theme.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/pink_dark</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_headphone</item>
+        <item name="postSplashScreenTheme">@style/Theme.Dictionary.NoActionBar</item>
+    </style>
+
+    <!-- app theme -->
+    <style name="Theme.Dictionary.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/immersive_sys_ui</item>
+        <!-- Customize your theme here. -->
+        <item name="android:navigationBarColor">@color/immersive_sys_ui</item>
+    </style>
+
 </resources>

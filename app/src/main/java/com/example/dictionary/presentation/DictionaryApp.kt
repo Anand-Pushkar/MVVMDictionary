@@ -4,7 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -62,6 +66,8 @@ fun DictionaryApp(
         val currentRoute = currentTabRoute(navController = navController)
         val currentTab = currentTab(currentRoute = currentRoute, tabs = tabs)
 
+        var visible by remember { mutableStateOf(false) }
+
         TabTheme(
             isDarkTheme = isDarkTheme,
             isNetworkAvailable = mutableStateOf(true), // we don't want to show multiple "no internet" messages
@@ -79,16 +85,34 @@ fun DictionaryApp(
                     scaffoldState.snackbarHostState
                 },
             ) {
-                NavGraph(
-                    darkTheme = isDarkTheme,
-                    isNetworkAvailable = isNetworkAvailable,
-                    finishActivity = finishActivity,
-                    onToggleTheme = { onToggleTheme() },
-                    navController = navController,
-                    setOnboardingComplete = setOnboardingComplete,
-                    onboardingComplete = onboardingComplete,
-                    startDestination = startDestination
-                )
+                AnimatedVisibility(
+                    visible = visible,
+                    enter = slideInVertically(
+                        initialOffsetY = {
+                            // Slide in from top
+                            it
+                        },
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = CubicBezierEasing(0f, 0f, 0f, 1f)
+
+                        )
+                    ),
+                ){
+                    NavGraph(
+                        darkTheme = isDarkTheme,
+                        isNetworkAvailable = isNetworkAvailable,
+                        finishActivity = finishActivity,
+                        onToggleTheme = { onToggleTheme() },
+                        navController = navController,
+                        setOnboardingComplete = setOnboardingComplete,
+                        onboardingComplete = onboardingComplete,
+                        startDestination = startDestination
+                    )
+                }
+                LaunchedEffect(true) {
+                    visible = true
+                }
             }
         }
     }
@@ -97,17 +121,11 @@ fun DictionaryApp(
 @SuppressLint("RememberReturnType")
 @ExperimentalAnimationApi
 @Composable
-public fun rememberAnimatedNavController(): NavHostController {
+fun rememberAnimatedNavController(): NavHostController {
     val navController = rememberNavController()
     val animatedNavigator = remember(navController) { AnimatedComposeNavigator() }
     return navController.apply {
         navigatorProvider += animatedNavigator
     }
 }
-
-
-
-
-
-
 

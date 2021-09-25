@@ -13,5 +13,7 @@
     <color name="red_varient_dark_theme">#ff829c</color>
     <color name="turquoise_varient_light_theme">#00fcc9</color>
     <color name="turquoise_varient_dark_theme">#7cffe5</color>
+    <color name="pink_light">#ff7597</color>
+    <color name="pink_dark">#24191c</color>
 </resources>
 

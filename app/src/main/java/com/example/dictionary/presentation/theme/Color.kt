@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.ui.graphics.Color
 
 
@@ -16,7 +17,8 @@ val yellowDarkPrimary = Color(0xff242316)
 val turquoiseVarient1 = Color(0xff00fcc9)
 val turquoiseVarient2 = Color(0xff009879)
 
-
+@SuppressLint("InvalidColorHexValue")
+val grey = Color(0xff33000000)
 
 /**
  * new blue color scheme
@@ -33,11 +35,14 @@ val blueDarkPrimary = Color(0xff1c1d24)
 val redVarient1 = Color(0xffff0336)
 val redVarient2 = Color(0xffff829c)
 
+val Black1 = Color(0xFF222222)
+val Black2 = Color(0xFF000000)
+
 
 val RedErrorDark = Color(0xFFB00020)
 val RedErrorLight = Color(0xFFEF5350)
 
-
+val golden = Color(0xFFFFD700)
 
 
 val pink200 = Color(0xffff7597)

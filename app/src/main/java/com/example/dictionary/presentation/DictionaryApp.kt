@@ -89,7 +89,7 @@ fun DictionaryApp(
                     visible = visible,
                     enter = slideInVertically(
                         initialOffsetY = {
-                            // Slide in from top
+                            // Slide in from bottom
                             it
                         },
                         animationSpec = tween(

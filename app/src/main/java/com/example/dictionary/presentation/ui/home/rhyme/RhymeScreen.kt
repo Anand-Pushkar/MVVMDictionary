@@ -26,6 +26,7 @@ fun RhymeScreen(
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
+    onNavigateToMyRhymesScreen: (String) -> Unit,
     navController: NavHostController,
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -66,6 +67,8 @@ fun RhymeScreen(
                     color = MaterialTheme.colors.primaryVariant,
                     mainText = "My Rhymes",
                     secondaryText = "Favourite words show here",
+                    route = Screen.MY_WORDS_SCREEN.route, // change to MY_RHYME_SCREEN later
+                    onNavigateToFavouriteScreen = onNavigateToMyRhymesScreen
                 )
             }
         }

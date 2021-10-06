@@ -1,6 +1,10 @@
 package com.example.dictionary.di
 
+import com.example.dictionary.cache.definition.DefinitionDao
+import com.example.dictionary.cache.definition.model.DefinitionEntityMapper
+import com.example.dictionary.interactors.definition_detail_screen.AddToFavoriteWords
 import com.example.dictionary.interactors.definition_detail_screen.GetDefinitions
+import com.example.dictionary.interactors.definition_detail_screen.RemoveFromFavoriteWords
 import com.example.dictionary.interactors.rhyme_detail_screen.GetRhymes
 import com.example.dictionary.interactors.search_screen.UpdateSearchSuggestions
 import com.example.dictionary.network.WordService
@@ -33,11 +37,43 @@ object InteractorsModule {
     @Provides
     fun provideGetDefinitions(
         dtoMapper: DefinitionDtoMapper,
-        wordService: WordService
+        wordService: WordService,
+        entityMapper: DefinitionEntityMapper,
+        definitionDao: DefinitionDao
     ): GetDefinitions {
         return GetDefinitions(
             dtoMapper = dtoMapper,
-            wordService = wordService
+            wordService = wordService,
+            entityMapper = entityMapper,
+            definitionDao = definitionDao
+        )
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideAddToFavoriteWords(
+        entityMapper: DefinitionEntityMapper,
+        definitionDao: DefinitionDao
+    ): AddToFavoriteWords {
+        return AddToFavoriteWords(
+            entityMapper = entityMapper,
+            definitionDao = definitionDao
+        )
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideRemoveFromFavoriteWords(
+        dtoMapper: DefinitionDtoMapper,
+        wordService: WordService,
+        entityMapper: DefinitionEntityMapper,
+        definitionDao: DefinitionDao
+    ): RemoveFromFavoriteWords {
+        return RemoveFromFavoriteWords(
+            dtoMapper = dtoMapper,
+            wordService = wordService,
+            entityMapper = entityMapper,
+            definitionDao = definitionDao
         )
     }
 

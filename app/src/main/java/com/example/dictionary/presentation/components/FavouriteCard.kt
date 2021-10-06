@@ -23,6 +23,8 @@ fun FavouriteCard(
     color: Color,
     mainText: String,
     secondaryText: String,
+    route: String,
+    onNavigateToFavouriteScreen: (String) -> Unit,
 ) {
     Card(
         shape = MaterialTheme.shapes.small,
@@ -31,7 +33,9 @@ fun FavouriteCard(
             .clip(RoundedCornerShape(10.dp))
             .background(color)
             .fillMaxWidth()
-            .clickable(onClick = {  }),
+            .clickable(onClick = {
+                onNavigateToFavouriteScreen(route)
+            }),
         elevation = 8.dp,
     ){
         Row(

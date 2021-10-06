@@ -211,9 +211,9 @@ fun PinkTheme(
     )
 }
 
-private val LightElevation = Elevations(card = 4.dp)
+private val LightElevation = Elevations(card = 8.dp)
 
-private val DarkElevation = Elevations(card = 6.dp)
+private val DarkElevation = Elevations(card = 16.dp)
 
 private val LightImages = Images(logo = R.drawable.ic_logo)
 
@@ -257,6 +257,7 @@ private fun DictionaryTheme(
                     verticalBias = 0.3f
                 )
                 DefaultSnackbar(
+                    darkTheme = darkTheme,
                     snackbarHostState = scaffoldState.snackbarHostState,
                     onDismiss = {
                         scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()

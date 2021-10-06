@@ -8,6 +8,8 @@ sealed class Screen(
     object DEFINITION_DETAIL_ROUTE: Screen("definitionDetail")
     object RHYME_DETAIL_ROUTE: Screen("rhymeDetail")
     object SEARCH_SCREEN_ROUTE: Screen("searchScreen")
+    object MY_WORDS_SCREEN: Screen("myWords")
+    object MY_RHYMES_SCREEN: Screen("myRhymes")
 
     fun withArgs(vararg args: String): String{
         return buildString {

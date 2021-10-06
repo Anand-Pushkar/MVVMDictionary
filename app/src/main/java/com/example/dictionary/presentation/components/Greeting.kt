@@ -47,9 +47,8 @@ fun GreetingSection(
             onClick = { onToggleTheme() }
         ) {
             Icon(
-                painter = if(isDarkTheme.value) painterResource(id = R.drawable.ic_light_theme) else painterResource(id = R.drawable.ic_dark_theme),
+                painter = if(isDarkTheme.value) painterResource(id = R.drawable.ic_dark_theme) else painterResource(id = R.drawable.ic_light_theme),
                 contentDescription = "toggle theme",
-                tint = MaterialTheme.colors.onPrimary,
                 modifier = Modifier.size(24.dp),
             )
         }

@@ -34,13 +34,17 @@ fun NavGraphBuilder.home(
     onboardingComplete: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
+    onNavigateToFavoriteScreen: (String) -> Unit,
 ) {
     composable(
         route = HomeTabs.DEFINITION.route,
+        enterTransition = { _, _ ->
+            fadeIn(animationSpec = tween(300))
+        },
         exitTransition = { _, _ ->
             fadeOut(animationSpec = tween(300))
         },
-        enterTransition = { _, _ ->
+        popEnterTransition = { _, _ ->
             fadeIn(animationSpec = tween(300))
         }
     ) {
@@ -51,16 +55,20 @@ fun NavGraphBuilder.home(
                 isNetworkAvailable = isNetworkAvailable,
                 onToggleTheme = { onToggleTheme() },
                 onNavigateToSearchScreen = onNavigateToSearchScreen,
+                onNavigateToMyWordsScreen = onNavigateToFavoriteScreen,
                 navController = navController
             )
         }
     }
     composable(
         route = HomeTabs.RHYME.route,
+        enterTransition = { _, _ ->
+            fadeIn(animationSpec = tween(300))
+        },
         exitTransition = { _, _ ->
             fadeOut(animationSpec = tween(300))
         },
-        enterTransition = { _, _ ->
+        popEnterTransition = { _, _ ->
             fadeIn(animationSpec = tween(300))
         }
     ) {
@@ -69,6 +77,7 @@ fun NavGraphBuilder.home(
             isNetworkAvailable = isNetworkAvailable,
             onToggleTheme = { onToggleTheme() },
             onNavigateToSearchScreen = onNavigateToSearchScreen,
+            onNavigateToMyRhymesScreen = onNavigateToFavoriteScreen,
             navController = navController
         )
     }

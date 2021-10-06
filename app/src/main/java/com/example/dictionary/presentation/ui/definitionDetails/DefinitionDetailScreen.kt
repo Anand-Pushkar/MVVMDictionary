@@ -11,12 +11,10 @@ import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -26,16 +24,14 @@ import com.example.dictionary.domain.model.definition.Definition
 import com.example.dictionary.presentation.components.LoadingListShimmer
 import com.example.dictionary.presentation.components.NothingHere
 import com.example.dictionary.presentation.components.SearchAppBar
+import com.example.dictionary.presentation.components.util.SnackbarController
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
+import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.util.DEFINITION
 import com.example.dictionary.util.SAD_FACE
 import com.example.dictionary.util.TAG
 import java.util.*
-
-val isFavourite = mutableStateOf(false)
-
-
 
 
 @ExperimentalMaterialApi
@@ -49,11 +45,10 @@ fun DefinitionDetailScreen(
     query: String
 ) {
 
-    if(query.isEmpty()){
+    if (query.isEmpty()) {
         Log.d(TAG, "DefinitionDetailScreen: query is empty")
         // show invalid search or something like that
-    }
-    else{
+    } else {
         // fire a one-off event to get the definitions from api
         val onLoad = viewModel.onLoad.value
         if (!onLoad) {
@@ -66,7 +61,6 @@ fun DefinitionDetailScreen(
         val scaffoldState = rememberScaffoldState()
         val dialogQueue = viewModel.dialogQueue
 
-
         BlueTheme(
             darkTheme = isDark,
             isNetworkAvailable = isNetworkAvailable,
@@ -78,6 +72,7 @@ fun DefinitionDetailScreen(
                 modifier = Modifier
                     .fillMaxSize(),
                 scaffoldState = scaffoldState,
+                backgroundColor = MaterialTheme.colors.primary,
                 snackbarHost = {
                     scaffoldState.snackbarHostState
                 },
@@ -91,6 +86,12 @@ fun DefinitionDetailScreen(
                         def = definition,
                         loading = loading,
                         onLoad = onLoad,
+                        addToFavorites = {
+                            viewModel.onTriggerEvent(DefinitionDetailScreenEvent.AddToFavoritesEvent(scaffoldState))
+                        },
+                        removeFromFavorites = {
+                            viewModel.onTriggerEvent(DefinitionDetailScreenEvent.RemoveFromFavoritesEvent(scaffoldState))
+                        }
                     )
                     MainCard(
                         def = definition,
@@ -113,11 +114,16 @@ fun BgCard(
     onLoad: Boolean,
     onNavigateToSearchScreen: (String) -> Unit,
     def: Definition?,
+    addToFavorites: () -> Unit,
+    removeFromFavorites: () -> Unit
 ) {
     Surface(
-        color = if(isDark.value){ Color.Black } else { MaterialTheme.colors.onPrimary },
+        color = if (isDark.value) {
+            immersive_sys_ui
+        } else {
+            MaterialTheme.colors.surface
+        },
         modifier = Modifier.fillMaxSize(),
-        elevation = 8.dp,
     ) {
         Column(
             modifier = Modifier
@@ -129,7 +135,7 @@ fun BgCard(
                 route = Screen.SEARCH_SCREEN_ROUTE.withArgs(DEFINITION)
             )
 
-            if(loading && def == null){
+            if (loading && def == null) {
                 LoadingListShimmer(
                     cardHeight = 35.dp,
                     cardWidth = 0.5f,
@@ -138,23 +144,21 @@ fun BgCard(
                     cardPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 12.dp),
                     linePadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 8.dp)
                 )
-            }
-            else if (!loading && def == null && onLoad) {
+            } else if (!loading && def == null && onLoad) {
                 // invalid search
                 Text(
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                     text = "Invalid Search!",
                     style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onSecondary),
                 )
-            }
-            else def?.let { def ->
+            } else def?.let { def ->
 
-                if(def.defs != null){
+                if (def.defs != null) {
 
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                         text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onSecondary),
+                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                     )
 
                     Row(
@@ -164,17 +168,16 @@ fun BgCard(
                             .fillMaxWidth()
                             .padding(vertical = 16.dp, horizontal = 24.dp)
                     ) {
-                        val pron = def.tags[1].substringAfter(":")
 
                         Text(
-                            text = "IPA : [ $pron ]",
-                            style = MaterialTheme.typography.h5.copy(color = MaterialTheme.colors.onSecondary),
+                            text = "IPA : [ ${def.pronunciation} ]",
+                            style = MaterialTheme.typography.h5.copy(color = MaterialTheme.colors.onPrimary),
                         )
 
-                        val resource: Painter = if (isFavourite.value) {
+                        val resource: Painter = if (def.isFavorite) {
                             painterResource(id = R.drawable.ic_star_red)
                         } else {
-                            painterResource(id = if(isDark.value){ R.drawable.ic_star_white_border } else { R.drawable.ic_star_black_border })
+                            painterResource(R.drawable.ic_star_white_border)
                         }
                         Image(
                             modifier = Modifier
@@ -182,7 +185,13 @@ fun BgCard(
                                 .height(32.dp)
                                 .clickable(
                                     onClick = {
-                                        isFavourite.value = !isFavourite.value
+                                        if(!def.isFavorite) {
+                                            Log.d(TAG, "BgCard: def.isFavorite = ${def.isFavorite} == adding to favorites")
+                                            addToFavorites()
+                                        }else{
+                                            Log.d(TAG, "BgCard: def.isFavorite = ${def.isFavorite} == removing from favorites")
+                                            removeFromFavorites()
+                                        }
                                     },
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
@@ -195,7 +204,7 @@ fun BgCard(
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                         text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onSecondary),
+                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                     )
                 }
 
@@ -217,9 +226,10 @@ fun MainCard(
             .fillMaxSize()
             .padding(top = 260.dp),
         shape = RoundedCornerShape(40.dp)
-            .copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
+            .copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize),
+        elevation = 16.dp
     ) {
-        if(loading && def == null){
+        if (loading && def == null) {
             LoadingListShimmer(
                 cardHeight = 30.dp,
                 cardWidth = 0.6f,
@@ -229,41 +239,39 @@ fun MainCard(
                 linePadding = PaddingValues(start = 32.dp, end = 8.dp)
             )
 
-        }
-        else if (!loading && def == null && onLoad) {
+        } else if (!loading && def == null && onLoad) {
             NothingHere()
-        }
-        else def?.let { def ->
+        } else def?.let { def ->
 
-            if(def.defs != null){
+            if (def.defs != null) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = 48.dp, top = 8.dp)
                 ) {
                     def.nouns?.let { nouns ->
-                        if(nouns.isNotEmpty()){
+                        if (nouns.isNotEmpty()) {
                             item {
                                 Section(type = "noun", list = nouns)
                             }
                         }
                     }
                     def.verbs?.let { verbs ->
-                        if(verbs.isNotEmpty()){
+                        if (verbs.isNotEmpty()) {
                             item {
                                 Section(type = "verb", list = verbs)
                             }
                         }
                     }
                     def.adjectives?.let { adjectives ->
-                        if(adjectives.isNotEmpty()){
+                        if (adjectives.isNotEmpty()) {
                             item {
                                 Section(type = "adjective", list = adjectives)
                             }
                         }
                     }
                     def.adverbs?.let { adverbs ->
-                        if(adverbs.isNotEmpty()){
+                        if (adverbs.isNotEmpty()) {
                             item {
                                 Section(type = "adverb", list = adverbs)
                             }
@@ -285,8 +293,7 @@ fun MainCard(
 fun Section(
     type: String,
     list: List<String>,
-){
-    Log.d(TAG, "Section: list size = ${list.size}")
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -297,7 +304,10 @@ fun Section(
                 .fillMaxWidth()
                 .padding(8.dp),
             text = type,
-            style = MaterialTheme.typography.h3.copy(fontStyle = FontStyle.Italic, color = MaterialTheme.colors.onPrimary)
+            style = MaterialTheme.typography.h3.copy(
+                fontStyle = FontStyle.Italic,
+                color = MaterialTheme.colors.onPrimary
+            )
         )
 
         var index = 0

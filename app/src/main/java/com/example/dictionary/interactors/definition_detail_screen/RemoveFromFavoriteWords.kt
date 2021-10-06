@@ -11,36 +11,38 @@ import com.example.dictionary.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class GetDefinitions(
+class RemoveFromFavoriteWords(
     val dtoMapper: DefinitionDtoMapper,
     val wordService: WordService,
     val entityMapper: DefinitionEntityMapper,
     val definitionDao: DefinitionDao
-){
+) {
     fun execute(
-        query: String,
+        definition: Definition,
         isNetworkAvailable: Boolean,
     ): Flow<DataState<Definition>> = flow{
 
         try {
             // loading
-            emit(DataState.loading())
+            emit(DataState.loading<Definition>())
 
-            // get recipe from the cache (favorites will be retrieved from here)
-            val def = getWordFromCache(query)
+            // remove from cache
+            definitionDao.deleteWord(entityMapper.mapFromDomainModel(definition))
 
-            if(def != null){ // if cache holds the recipe
-                Log.d(TAG, "execute: getting ${def.word} from cache || def.isFavorite = ${def.isFavorite}")
-                emit(DataState.success<Definition>(def))
+            // read from the cache
+            val def = getWordFromCache(definition.word)
+
+            // if cache still holds the word, delete again, although this should not happen
+            if(def != null){
+                definitionDao.deleteWord(entityMapper.mapFromDomainModel(definition))
             }
-            else{ // get recipe from network
-                if(isNetworkAvailable){
-                    val defs = getDefinitionsFromNetwork(query)
-                    defs.forEach { def ->
-                        if(def.word.compareTo(query.lowercase()) == 0){
-                            Log.d(TAG, "execute: getting ${def.word} from network")
-                            emit(DataState.success<Definition>(def))
-                        }
+
+            // get recipe from network and emit
+            if(isNetworkAvailable){
+                val defs = getDefinitionsFromNetwork(definition.word)
+                defs.forEach { def ->
+                    if(def.word.compareTo(definition.word.lowercase()) == 0){
+                        emit(DataState.success<Definition>(def))
                     }
                 }
             }

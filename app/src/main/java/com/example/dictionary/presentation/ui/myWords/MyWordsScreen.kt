@@ -12,13 +12,21 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.dictionary.R
+import com.example.dictionary.presentation.components.OutlinedAvatar
 import com.example.dictionary.presentation.theme.BlueTheme
-import com.example.dictionary.presentation.theme.DictionaryTheme
+import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.presentation.ui.util.DialogQueue
 import kotlin.math.ceil
 
 
-val myWords = listOf("yellow", "blue", "potato", "absolute", "basic", "awesome", "honor", "honest")
+val myWords = listOf("yellow", "blue", "overwhelming", "absolute", "absolutely", "awesome", "honor", "honest")
+
+val type = listOf("affected by jaundice which causes yellowing of skin etc", "the quality or state of the chromatic color resembling the hue of sunflowers or ripe lemons")
+
+var counter: Boolean = true
 
 @ExperimentalMaterialApi
 @Composable
@@ -41,26 +49,48 @@ fun MyWordsScreen(
             modifier = Modifier
                 .fillMaxSize(),
             scaffoldState = scaffoldState,
+            backgroundColor = immersive_sys_ui,
             snackbarHost = {
                 scaffoldState.snackbarHostState
             },
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
                     .padding(top = 48.dp, bottom = 48.dp)
             ) {
-                //CoursesAppBar()
-                StaggeredVerticalGrid(
-                    maxColumnWidth = 220.dp,
-                    modifier = Modifier.padding(4.dp)
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    myWords.forEach { myWord ->
-                        FavoriteWord(myWord = myWord)
+                    TopWordBar()
+                    StaggeredVerticalGrid(
+                        maxColumnWidth = 220.dp,
+                        modifier = Modifier.padding(4.dp)
+                    ) {
+                        myWords.forEach { myWord ->
+                            FavoriteWord(myWord = myWord)
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun TopWordBar() {
+    Row(
+        modifier = Modifier.padding(bottom = 16.dp),
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp),
+            text = "My Words",
+            style = MaterialTheme.typography.h2.copy(
+                fontSize = 32.sp,
+                color = MaterialTheme.colors.primaryVariant
+            ),
+        )
     }
 }
 
@@ -71,9 +101,15 @@ fun FavoriteWord(
     Surface(
         modifier = Modifier.padding(4.dp),
         color = MaterialTheme.colors.primary,
-        elevation = DictionaryTheme.elevations.card,
-        shape = MaterialTheme.shapes.medium
+        elevation = 16.dp,
     ) {
+
+        val type = if (counter) {
+            type[0]
+        } else {
+            type[1]
+        }
+        counter = !counter
 
         Column(
             modifier = Modifier
@@ -82,43 +118,64 @@ fun FavoriteWord(
             Text(
                 text = myWord,
                 color = MaterialTheme.colors.onPrimary,
-                style = MaterialTheme.typography.h2.copy(),
+                style = MaterialTheme.typography.h2,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(top = 16.dp, bottom = 16.dp, start = 4.dp, end = 4.dp)
                     .fillMaxWidth()
             )
 
             Text(
                 text = "[ jˈɛɫoʊ ]",
                 color = MaterialTheme.colors.onPrimary,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle2,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
                     .fillMaxWidth()
+            )
 
-            )
-            Spacer(
-                modifier = Modifier
-                    //.padding(4.dp)
-                    .fillMaxWidth()
-                    .height(2.dp)
-                    .background(color = MaterialTheme.colors.secondary),
-            )
+            ConstraintLayout(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val (line, avatar) = createRefs()
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(color = MaterialTheme.colors.secondary)
+                        .constrainAs(line) {
+                            centerVerticallyTo(parent)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        },
+                )
+                OutlinedAvatar(
+                    modifier = Modifier
+                        .constrainAs(avatar) {
+                            centerVerticallyTo(parent)
+                            centerHorizontallyTo(parent)
+                        },
+                    res = R.drawable.ic_light_bulb_white,
+                    size = 24.dp,
+                    filledColor = MaterialTheme.colors.primaryVariant
+                )
+            }
+
             Text(
-                text = "the quality or state of the chromatic color resembling the hue of sunflowers or ripe lemons",
+                text = type,
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.h4,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(top = 16.dp, bottom = 16.dp, start = 8.dp, end = 8.dp )
                     .fillMaxWidth()
-
             )
+
         }
     }
 }
+
 
 @Composable
 fun StaggeredVerticalGrid(
@@ -164,6 +221,7 @@ fun StaggeredVerticalGrid(
 }
 
 private fun shortestColumn(colHeights: IntArray): Int {
+
     var minHeight = Int.MAX_VALUE
     var column = 0
     colHeights.forEachIndexed { index, height ->

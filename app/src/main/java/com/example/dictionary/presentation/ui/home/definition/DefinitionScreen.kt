@@ -34,6 +34,7 @@ fun DefinitionScreen(
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
+    onNavigateToMyWordsScreen: (String) -> Unit,
     navController: NavHostController,
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -75,6 +76,8 @@ fun DefinitionScreen(
                     color = MaterialTheme.colors.primaryVariant,
                     mainText = "My Words",
                     secondaryText = "Favourite words show here",
+                    route = Screen.MY_WORDS_SCREEN.route,
+                    onNavigateToFavouriteScreen = onNavigateToMyWordsScreen
                 )
             }
         }

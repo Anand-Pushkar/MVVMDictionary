@@ -14,16 +14,20 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
+import com.example.dictionary.presentation.components.util.SnackbarController
 import com.example.dictionary.presentation.rememberAnimatedNavController
 import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailScreen
 import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailViewModel
 import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.presentation.ui.home.home
+import com.example.dictionary.presentation.ui.myWords.MyWordsScreen
+import com.example.dictionary.presentation.ui.myWords.MyWordsViewModel
 import com.example.dictionary.presentation.ui.onboarding.Onboarding
 import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailScreen
 import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailViewModel
@@ -80,10 +84,37 @@ fun NavGraph(
                     onboardingComplete = onboardingComplete,
                     onToggleTheme = { onToggleTheme() },
                     onNavigateToSearchScreen = { route ->
-                        navBackStackEntry?.let { actions.openSearchScreen(route, it) }
+                        navBackStackEntry?.let { backStackEntry ->
+                            if (backStackEntry.lifecycleIsResumed()) {
+                                navController.navigate(route)
+                            }
+                        }
                     },
+                    onNavigateToFavoriteScreen = { route ->
+                        navBackStackEntry?.let { backStackEntry ->
+                            if (backStackEntry.lifecycleIsResumed()) {
+                                navController.navigate(route)
+                            }
+                        }
+
+                    }
                 )
             }
+
+            searchScreen(
+                darkTheme = darkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                navController = navController,
+                height = constraints.maxHeight,
+                width = constraints.maxWidth
+            )
+
+            myWords(
+                darkTheme = darkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                navController = navController,
+                width = constraints.maxWidth,
+            )
 
             definitionDetailScreen(
                 darkTheme = darkTheme,
@@ -99,17 +130,10 @@ fun NavGraph(
                 width = constraints.maxWidth,
             )
 
-            searchScreen(
-                darkTheme = darkTheme,
-                isNetworkAvailable = isNetworkAvailable,
-                navController = navController,
-                height = constraints.maxHeight,
-                width = constraints.maxWidth
-            )
         }
     }
-
 }
+
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
@@ -137,6 +161,134 @@ fun NavGraphBuilder.onBoardingScreen(
             setOnboardingComplete()
             navController.popBackStack()
         }
+    }
+}
+
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+fun NavGraphBuilder.searchScreen(
+    darkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
+    navController: NavHostController,
+    height: Int,
+    width: Int,
+){
+    // enter up, exit(going to detail screen) down, pop enter(back from detail screen) slide in from right, pop exit down
+    composable(
+        route = Screen.SEARCH_SCREEN_ROUTE.route + "/{parentScreen}",
+        enterTransition = { _, _ ->
+            slideInVertically(
+                initialOffsetY = { height },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = { _, target ->
+            slideOutVertically(
+                targetOffsetY = { height },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(300))
+        },
+        popEnterTransition = { _, _ ->
+            slideInHorizontally(
+                initialOffsetX = { -width },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(300))
+        },
+        exitTransition = { _, _ ->
+            slideOutHorizontally(
+                targetOffsetX = { -width },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(300))
+        },
+        arguments = listOf(navArgument("parentScreen"){
+            type = NavType.StringType
+        }),
+    ){ backStackEntry: NavBackStackEntry ->
+        backStackEntry.arguments?.getString("parentScreen")?.let {
+
+            val factory = HiltViewModelFactory(
+                LocalContext.current, backStackEntry
+            )
+            val viewModel: SearchViewModel = viewModel(
+                key = "SearchViewModel",
+                factory = factory
+            )
+            SearchScreen(
+                isDark = darkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                onNavigateToDetailScreen = { route ->
+                    // In order to discard duplicated navigation events, we check the Lifecycle
+                    if (backStackEntry.lifecycleIsResumed()) {
+                        navController.navigate(route)
+                    }
+                },
+                parent = mutableStateOf(it),
+                viewModel = viewModel
+            )
+        }
+    }
+}
+
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+fun NavGraphBuilder.myWords(
+    darkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
+    navController: NavHostController,
+    width: Int
+){
+    composable(
+        route = Screen.MY_WORDS_SCREEN.route,
+        enterTransition = { _, _ ->
+            fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = { _, _ ->
+            fadeOut(animationSpec = tween(300))
+        },
+        exitTransition = { _, _ ->
+            slideOutHorizontally(
+                targetOffsetX = { -width },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(300))
+        },
+        popEnterTransition = { _, _ ->
+            slideInHorizontally(
+                initialOffsetX = { -width },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(300))
+        },
+    ){ backStackEntry: NavBackStackEntry ->
+        val factory = HiltViewModelFactory(
+            LocalContext.current, backStackEntry
+        )
+        val viewModel: MyWordsViewModel = viewModel(
+            key = "MyWordsViewModel",
+            factory = factory
+        )
+        MyWordsScreen(
+            isDark = darkTheme,
+            isNetworkAvailable = isNetworkAvailable,
+            viewModel = viewModel
+        )
     }
 }
 
@@ -191,6 +343,7 @@ fun NavGraphBuilder.definitionDetailScreen(
                 key = "DefinitionDetailViewModel",
                 factory = factory
             )
+
             DefinitionDetailScreen(
                 isDark = darkTheme,
                 isNetworkAvailable = isNetworkAvailable,
@@ -281,84 +434,7 @@ fun NavGraphBuilder.rhymeDetailScreen(
     }
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
-@ExperimentalAnimationApi
-fun NavGraphBuilder.searchScreen(
-    darkTheme: MutableState<Boolean>,
-    isNetworkAvailable: MutableState<Boolean>,
-    navController: NavHostController,
-    height: Int,
-    width: Int,
 
-){
-    // enter up, exit(going to detail screen) down, pop enter(back from detail screen) slide in from right, pop exit down
-    composable(
-        route = Screen.SEARCH_SCREEN_ROUTE.route + "/{parentScreen}",
-        enterTransition = { _, _ ->
-            slideInVertically(
-                initialOffsetY = { height },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeIn(animationSpec = tween(300))
-        },
-        popExitTransition = { _, target ->
-            slideOutVertically(
-                targetOffsetY = { height },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeOut(animationSpec = tween(300))
-        },
-        popEnterTransition = { _, _ ->
-            slideInHorizontally(
-                initialOffsetX = { -width },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeIn(animationSpec = tween(300))
-        },
-        exitTransition = { _, _ ->
-            slideOutHorizontally(
-                targetOffsetX = { -width },
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            ) + fadeOut(animationSpec = tween(300))
-        },
-        arguments = listOf(navArgument("parentScreen"){
-            type = NavType.StringType
-        }),
-    ){ backStackEntry: NavBackStackEntry ->
-        backStackEntry.arguments?.getString("parentScreen")?.let {
-
-            val factory = HiltViewModelFactory(
-                LocalContext.current, backStackEntry
-            )
-            val viewModel: SearchViewModel = viewModel(
-                key = "SearchViewModel",
-                factory = factory
-            )
-            SearchScreen(
-                isDark = darkTheme,
-                isNetworkAvailable = isNetworkAvailable,
-                onNavigateToDetailScreen = { route ->
-                    // In order to discard duplicated navigation events, we check the Lifecycle
-                    if (backStackEntry.lifecycleIsResumed()) {
-                        navController.navigate(route)
-                    }
-                },
-                parent = mutableStateOf(it),
-                viewModel = viewModel
-            )
-        }
-    }
-}
 
 class MainActions(navController: NavHostController) {
 
@@ -381,8 +457,6 @@ class MainActions(navController: NavHostController) {
     }
 
 }
-
-
 
 
 /**

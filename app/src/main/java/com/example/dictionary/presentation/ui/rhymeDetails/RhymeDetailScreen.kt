@@ -33,6 +33,7 @@ import com.example.dictionary.presentation.components.NothingHere
 import com.example.dictionary.presentation.components.SearchAppBar
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.YellowTheme
+import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.util.RHYME
 import com.example.dictionary.util.SAD_FACE
 import com.example.dictionary.util.TAG
@@ -83,6 +84,7 @@ fun RhymeDetailScreen(
                 modifier = Modifier
                     .fillMaxSize(),
                 scaffoldState = scaffoldState,
+                backgroundColor = MaterialTheme.colors.primary,
                 snackbarHost = {
                     scaffoldState.snackbarHostState
                 },
@@ -122,9 +124,8 @@ fun BgCard(
 ) {
 
     Surface(
-        color = MaterialTheme.colors.onSecondary,
+        color = if(isDark.value){ immersive_sys_ui } else { MaterialTheme.colors.surface },
         modifier = Modifier.fillMaxSize(),
-        elevation = 8.dp,
     ) {
         Column(
             modifier = Modifier
@@ -235,7 +236,8 @@ fun MainCard(
             .fillMaxSize()
             .padding(top = 260.dp),
         shape = RoundedCornerShape(40.dp)
-            .copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize)
+            .copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize),
+        elevation = 16.dp,
     ) {
 
         if (loading && rhymes == null) {

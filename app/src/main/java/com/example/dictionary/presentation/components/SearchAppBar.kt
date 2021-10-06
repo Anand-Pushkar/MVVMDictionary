@@ -48,7 +48,7 @@ fun SearchAppBar(
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .clip(RoundedCornerShape(32.dp)),
         color = MaterialTheme.colors.secondary,
-        elevation = 8.dp,
+        elevation = 16.dp,
 
     ) {
         TextField(

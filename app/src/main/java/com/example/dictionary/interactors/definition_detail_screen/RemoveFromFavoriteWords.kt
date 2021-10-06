@@ -45,6 +45,11 @@ class RemoveFromFavoriteWords(
                         emit(DataState.success<Definition>(def))
                     }
                 }
+            }else{
+                if (definition != null) {
+                    definition.isFavorite = false
+                    emit(DataState.success<Definition>(definition))
+                }
             }
         }catch (e: Exception){
             Log.e(TAG, "execute: ${e.message}")

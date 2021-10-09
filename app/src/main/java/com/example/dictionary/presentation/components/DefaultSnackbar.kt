@@ -2,6 +2,7 @@ package com.example.dictionary.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -49,7 +50,13 @@ fun DefaultSnackbar(
                             )
                         }
                     }
-                }
+                },
+                shape = MaterialTheme.shapes.small.copy(
+                    topStart = CornerSize(24.dp),
+                    topEnd = CornerSize(24.dp),
+                    bottomEnd = CornerSize(24.dp),
+                    bottomStart = CornerSize(24.dp)
+                )
             )
         }
     )

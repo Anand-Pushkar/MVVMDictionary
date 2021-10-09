@@ -44,6 +44,10 @@ class DefinitionEntityMapper: DomainMapper<DefinitionEntity, Definition> {
         return initial.map { mapToDomainModel(it) }
     }
 
+    fun toDomainMinimalList(initial: List<DefinitionEntityMinimal>): List<DefinitionMinimal>{
+        return initial.map { mapToDomainMinimalModel(it) }
+    }
+
     fun fromDomainList(initial: List<Definition>): List<DefinitionEntity>{
         return initial.map { mapFromDomainModel(it) }
     }

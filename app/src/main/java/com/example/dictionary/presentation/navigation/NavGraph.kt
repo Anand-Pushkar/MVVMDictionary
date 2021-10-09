@@ -248,7 +248,7 @@ fun NavGraphBuilder.myWords(
     darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     navController: NavHostController,
-    width: Int
+    width: Int,
 ){
     composable(
         route = Screen.MY_WORDS_SCREEN.route,
@@ -287,7 +287,13 @@ fun NavGraphBuilder.myWords(
         MyWordsScreen(
             isDark = darkTheme,
             isNetworkAvailable = isNetworkAvailable,
-            viewModel = viewModel
+            viewModel = viewModel,
+            onNavigateToDetailScreen = { route ->
+                // In order to discard duplicated navigation events, we check the Lifecycle
+                if (backStackEntry.lifecycleIsResumed()) {
+                    navController.navigate(route)
+                }
+            }
         )
     }
 }

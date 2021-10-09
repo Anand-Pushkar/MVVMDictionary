@@ -25,6 +25,7 @@ class GetRhymes(
 
             // data
             if(isNetworkAvailable){
+                Log.d(TAG, "execute: network available")
                 val rhymes = getRhymesFromNetwork(query)
                 emit(DataState.success(rhymes))
             }

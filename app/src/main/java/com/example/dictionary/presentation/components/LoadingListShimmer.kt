@@ -67,24 +67,42 @@ fun LoadingListShimmer(
             Color.LightGray.copy(alpha = .9f),
         )
 
-        LazyColumn {
-            items(repetition){
-                ShimmerCardItem(
-                    colors = colors,
-                    xShimmer = xCardShimmer.value,
-                    yShimmer = yCardShimmer.value,
-                    cardHeight = cardHeight,
-                    cardWidth = cardWidth,
-                    cardPadding = cardPadding,
-                    lineHeight = lineHeight,
-                    gradientWidth = gradientWidth,
-                    padding = padding,
-                    lines = lines,
-                    linePadding = linePadding,
-                    lineWidth = lineWidth
-                )
+        if(repetition == 1){
+            ShimmerCardItem(
+                colors = colors,
+                xShimmer = xCardShimmer.value,
+                yShimmer = yCardShimmer.value,
+                cardHeight = cardHeight,
+                cardWidth = cardWidth,
+                cardPadding = cardPadding,
+                lineHeight = lineHeight,
+                gradientWidth = gradientWidth,
+                padding = padding,
+                lines = lines,
+                linePadding = linePadding,
+                lineWidth = lineWidth
+            )
+        }else{
+            LazyColumn {
+                items(repetition){
+                    ShimmerCardItem(
+                        colors = colors,
+                        xShimmer = xCardShimmer.value,
+                        yShimmer = yCardShimmer.value,
+                        cardHeight = cardHeight,
+                        cardWidth = cardWidth,
+                        cardPadding = cardPadding,
+                        lineHeight = lineHeight,
+                        gradientWidth = gradientWidth,
+                        padding = padding,
+                        lines = lines,
+                        linePadding = linePadding,
+                        lineWidth = lineWidth
+                    )
+                }
             }
         }
+
     }
 
 }

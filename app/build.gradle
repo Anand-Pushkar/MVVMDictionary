@@ -122,4 +122,4 @@ dependencies {
 
     // compose testing
     implementation InstrumentationTest.compose_ui
-}
+    }

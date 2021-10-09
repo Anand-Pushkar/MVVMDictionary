@@ -204,15 +204,21 @@ fun BgCard(
                         )
                     }
                 } else {
+                    // invalid search
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
-                        text = rhymes.mainWord.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
-                        },
+                        text = "Invalid Search!",
                         style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                     )
+//                    Text(
+//                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+//                        text = rhymes.mainWord.replaceFirstChar {
+//                            if (it.isLowerCase()) it.titlecase(
+//                                Locale.getDefault()
+//                            ) else it.toString()
+//                        },
+//                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
+//                    )
                 }
             }
         }
@@ -230,6 +236,7 @@ fun MainCard(
     onNavigationToDefinitionDetailScreen: (String) -> Unit,
 ) {
 
+    Log.d(TAG, "MainCard: ${rhymesMap}")
     Surface(
         color = MaterialTheme.colors.primary,
         modifier = Modifier
@@ -271,10 +278,11 @@ fun MainCard(
                     }
                 }
             } else {
-                NothingHere(
-                    face = SAD_FACE,
-                    text = "Rhymes not found!"
-                )
+                NothingHere()
+//                NothingHere(
+//                    face = SAD_FACE,
+//                    text = "Rhymes not found!"
+//                )
             }
         }
     }

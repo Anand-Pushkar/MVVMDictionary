@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.ui.myWords
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,18 +16,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.dictionary.R
+import com.example.dictionary.domain.model.definition.DefinitionMinimal
+import com.example.dictionary.presentation.components.LoadingListShimmer
+import com.example.dictionary.presentation.components.NothingHere
 import com.example.dictionary.presentation.components.OutlinedAvatar
+import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.presentation.ui.util.DialogQueue
+import com.example.dictionary.util.TAG
 import kotlin.math.ceil
 
-
-val myWords = listOf("yellow", "blue", "overwhelming", "absolute", "absolutely", "awesome", "honor", "honest")
-
-val type = listOf("affected by jaundice which causes yellowing of skin etc", "the quality or state of the chromatic color resembling the hue of sunflowers or ripe lemons")
-
-var counter: Boolean = true
 
 @ExperimentalMaterialApi
 @Composable
@@ -34,16 +34,29 @@ fun MyWordsScreen(
     isDark: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     viewModel: MyWordsViewModel,
+    onNavigateToDetailScreen: (String) -> Unit
 ) {
+
+    // fire a one-off event to get the definitions from cache
+
+    val onLoad = viewModel.onLoad.value
+    if (!onLoad) {
+        viewModel.onLoad.value = true
+        viewModel.onTriggerEvent(MyWordsScreenEvent.GetFavoriteWordsEvent)
+    }
+
+    val myWordsList = viewModel.myWordsList.value
     val scaffoldState = rememberScaffoldState()
-    val dialogQueue = DialogQueue()
+    val dialogQueue = viewModel.dialogQueue
+    val loading = viewModel.loading.value
+
 
     BlueTheme(
         darkTheme = isDark,
         isNetworkAvailable = isNetworkAvailable,
         scaffoldState = scaffoldState,
         dialogQueue = dialogQueue.queue.value,
-        displayProgressBar = false, // change with loading
+        displayProgressBar = loading,
     ) {
         Scaffold(
             modifier = Modifier
@@ -54,21 +67,55 @@ fun MyWordsScreen(
                 scaffoldState.snackbarHostState
             },
         ) {
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .padding(top = 48.dp, bottom = 48.dp)
             ) {
+                val height = constraints.maxHeight
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                 ) {
                     TopWordBar()
-                    StaggeredVerticalGrid(
-                        maxColumnWidth = 220.dp,
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        myWords.forEach { myWord ->
-                            FavoriteWord(myWord = myWord)
+                    if (loading && myWordsList == null){
+                        // shimmer
+                        Log.d(TAG, "MyWordsScreen: SHIMMER")
+                        StaggeredVerticalGrid(
+                            maxColumnWidth = 220.dp,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            repeat(8){
+                                LoadingListShimmer(
+                                    cardHeight = (200..260).random().dp,
+                                    lines = 0,
+                                    padding = 2.dp,
+                                    cardPadding = PaddingValues(2.dp)
+                                )
+                            }
+                        }
+                    }
+                    else if (!loading && myWordsList.isNullOrEmpty() && onLoad) {
+                        NothingHere(
+                            modifier = Modifier.padding(top = (height / 8).dp),
+                        )
+                    }
+                    else myWordsList?.let{ myWordsList ->
+                        StaggeredVerticalGrid(
+                            maxColumnWidth = 220.dp,
+                            modifier = Modifier.padding(4.dp)
+                        ) {
+                            myWordsList.forEach { myWord ->
+                                WordCard(
+                                    loading = loading,
+                                    onLoad = onLoad,
+                                    myWord = myWord,
+                                    onNavigateToDetailScreen = { route ->
+                                        viewModel.onLoad.value = false
+                                        onNavigateToDetailScreen(route)
+                                    }
+                                )
+                            }
+
                         }
                     }
                 }
@@ -94,29 +141,31 @@ fun TopWordBar() {
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
-fun FavoriteWord(
-    myWord: String
+fun WordCard(
+    loading: Boolean,
+    onLoad: Boolean,
+    myWord: DefinitionMinimal,
+    onNavigateToDetailScreen: (String) -> Unit
 ) {
-    Surface(
-        modifier = Modifier.padding(4.dp),
-        color = MaterialTheme.colors.primary,
-        elevation = 16.dp,
+    Card(
+        onClick = {
+            val route = Screen.DEFINITION_DETAIL_ROUTE.withArgs(myWord.word)
+            onNavigateToDetailScreen(route)
+        },
+        modifier = Modifier
+            .padding(4.dp),
+        backgroundColor = MaterialTheme.colors.primary,
+        elevation = 8.dp,
     ) {
-
-        val type = if (counter) {
-            type[0]
-        } else {
-            type[1]
-        }
-        counter = !counter
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             Text(
-                text = myWord,
+                text = myWord.word,
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.h2,
                 textAlign = TextAlign.Center,
@@ -126,7 +175,7 @@ fun FavoriteWord(
             )
 
             Text(
-                text = "[ jˈɛɫoʊ ]",
+                text = "IPA : [ ${myWord.pronunciation} ]",
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.subtitle2,
                 textAlign = TextAlign.Center,
@@ -163,12 +212,12 @@ fun FavoriteWord(
             }
 
             Text(
-                text = type,
+                text = myWord.statement,
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.h4,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(top = 16.dp, bottom = 16.dp, start = 8.dp, end = 8.dp )
+                    .padding(top = 16.dp, bottom = 16.dp, start = 8.dp, end = 8.dp)
                     .fillMaxWidth()
             )
 

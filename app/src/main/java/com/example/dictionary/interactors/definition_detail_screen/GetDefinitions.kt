@@ -24,22 +24,24 @@ class GetDefinitions(
 
         try {
             // loading
-            emit(DataState.loading())
+            emit(DataState.loading<Definition>())
 
-            // get recipe from the cache (favorites will be retrieved from here)
+            // get definition from the cache (favorites will be retrieved from here)
             val def = getWordFromCache(query)
 
-            if(def != null){ // if cache holds the recipe
+            if(def != null){ // if cache holds the definition
                 Log.d(TAG, "execute: getting ${def.word} from cache || def.isFavorite = ${def.isFavorite}")
                 emit(DataState.success<Definition>(def))
             }
-            else{ // get recipe from network
+            else{ // get definition from network
                 if(isNetworkAvailable){
                     val defs = getDefinitionsFromNetwork(query)
                     defs.forEach { def ->
                         if(def.word.compareTo(query.lowercase()) == 0){
                             Log.d(TAG, "execute: getting ${def.word} from network")
                             emit(DataState.success<Definition>(def))
+                        }else{
+                            emit(DataState.error<Definition>("Invalid Search"))
                         }
                     }
                 }

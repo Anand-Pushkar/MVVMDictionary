@@ -5,10 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.R
 
+@ExperimentalMaterialApi
 @Composable
 fun FavouriteCard(
     color: Color,
@@ -27,15 +25,16 @@ fun FavouriteCard(
     onNavigateToFavouriteScreen: (String) -> Unit,
 ) {
     Card(
+        onClick = { onNavigateToFavouriteScreen(route) },
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, top = 30.dp, bottom = 20.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(color)
-            .fillMaxWidth()
-            .clickable(onClick = {
-                onNavigateToFavouriteScreen(route)
-            }),
+            .fillMaxWidth(),
+//            .clickable(onClick = {
+//                onNavigateToFavouriteScreen(route)
+//            }),
         elevation = 8.dp,
     ){
         Row(

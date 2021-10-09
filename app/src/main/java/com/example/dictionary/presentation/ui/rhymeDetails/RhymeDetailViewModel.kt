@@ -72,6 +72,11 @@ constructor(
                 rhymesMap.value = getRhymesMap(rhymes.value)
             }
 
+            // error
+            dataState.error?.let { error ->
+                dialogQueue.appendErrorMessage("Error", error)
+            }
+
         }.launchIn(viewModelScope)
 
     }

@@ -18,9 +18,11 @@ import com.example.dictionary.util.SHRUG_FACE
 fun NothingHere(
     face: String = SHRUG_FACE,
     text: String = "There's nothing here",
+    extraText: String = "",
+    modifier: Modifier = Modifier
 ){
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ){
         Column(
             modifier = Modifier
@@ -35,6 +37,11 @@ fun NothingHere(
             Text(
                 modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally),
                 text = text,
+                style = MaterialTheme.typography.h4
+            )
+            Text(
+                modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally),
+                text = extraText,
                 style = MaterialTheme.typography.h4
             )
         }

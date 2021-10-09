@@ -5,6 +5,7 @@ import com.example.dictionary.cache.definition.model.DefinitionEntityMapper
 import com.example.dictionary.interactors.definition_detail_screen.AddToFavoriteWords
 import com.example.dictionary.interactors.definition_detail_screen.GetDefinitions
 import com.example.dictionary.interactors.definition_detail_screen.RemoveFromFavoriteWords
+import com.example.dictionary.interactors.my_words_screen.GetFavoriteWords
 import com.example.dictionary.interactors.rhyme_detail_screen.GetRhymes
 import com.example.dictionary.interactors.search_screen.UpdateSearchSuggestions
 import com.example.dictionary.network.WordService
@@ -21,6 +22,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object InteractorsModule {
 
+    // search screen
     @ViewModelScoped
     @Provides
     fun provideUpdateSearchSuggestions(
@@ -33,6 +35,7 @@ object InteractorsModule {
         )
     }
 
+    // definition detail screen
     @ViewModelScoped
     @Provides
     fun provideGetDefinitions(
@@ -77,6 +80,7 @@ object InteractorsModule {
         )
     }
 
+    // rhyme detail screen
     @ViewModelScoped
     @Provides
     fun provideGetRhymes(
@@ -86,6 +90,19 @@ object InteractorsModule {
         return GetRhymes(
             dtoMapper = dtoMapper,
             wordService = wordService
+        )
+    }
+
+    // my words screen
+    @ViewModelScoped
+    @Provides
+    fun provideGetFavoriteWords(
+        entityMapper: DefinitionEntityMapper,
+        definitionDao: DefinitionDao
+    ): GetFavoriteWords{
+        return GetFavoriteWords(
+            entityMapper = entityMapper,
+            definitionDao = definitionDao
         )
     }
 }

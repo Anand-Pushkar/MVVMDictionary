@@ -78,7 +78,11 @@ constructor(
 
             // error
             dataState.error?.let { error ->
-                dialogQueue.appendErrorMessage("Error", error)
+                if(error == "Invalid Search"){
+                    // do nothing or maybe show snackbar
+                }else{
+                    dialogQueue.appendErrorMessage("Error", error)
+                }
             }
 
         }.launchIn(viewModelScope)
@@ -104,8 +108,8 @@ constructor(
                     val word = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
-                        message = "${word} added to Favorites!",
-                        actionLabel = "THANKS"
+                        message = "${word} added to Favourites!",
+                        actionLabel = "OK"
                     )
                 }
 
@@ -138,8 +142,8 @@ constructor(
                     val word = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                     snackbarController.showSnackbar(
                         scaffoldState = scaffoldState,
-                        message = "${word} removed from Favorites!",
-                        actionLabel = "THANKS"
+                        message = "${word} removed from Favourites!",
+                        actionLabel = "OK"
                     )
                 }
 

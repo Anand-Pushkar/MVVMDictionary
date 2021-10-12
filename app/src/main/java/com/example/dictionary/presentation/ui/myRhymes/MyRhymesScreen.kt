@@ -53,7 +53,8 @@ fun MyRhymesScreen(
                     .padding(top = 48.dp, bottom = 48.dp)
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) {
                     item {
                         TopRhymeBar()
@@ -79,16 +80,10 @@ fun MyRhyme(
         val stagger = if (index % 2 == 0) 72.dp else 16.dp
         Spacer(modifier = Modifier.width(stagger))
         MyRhymesListItem(
+            modifier = Modifier.padding(top = 4.dp),
             onNavigateToDetailScreen = { Log.d(TAG, "MyRhyme: clicked") },
             shape = RoundedCornerShape(topStart = 24.dp),
         )
-
-//        CourseListItem(
-//            course = course,
-//            onClick = { selectCourse(course.id) },
-//            shape = RoundedCornerShape(topStart = 24.dp),
-//            modifier = Modifier.height(96.dp)
-//        )
     }
 }
 

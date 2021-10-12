@@ -67,7 +67,7 @@ fun RhymeScreen(
                     color = MaterialTheme.colors.primaryVariant,
                     mainText = "My Rhymes",
                     secondaryText = "Favourite words show here",
-                    route = Screen.MY_WORDS_SCREEN.route, // change to MY_RHYME_SCREEN later
+                    route = Screen.MY_RHYMES_SCREEN.route,
                     onNavigateToFavouriteScreen = onNavigateToMyRhymesScreen
                 )
             }

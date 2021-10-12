@@ -26,6 +26,8 @@ import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetail
 import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailViewModel
 import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.presentation.ui.home.home
+import com.example.dictionary.presentation.ui.myRhymes.MyRhymesScreen
+import com.example.dictionary.presentation.ui.myRhymes.MyRhymesViewModel
 import com.example.dictionary.presentation.ui.myWords.MyWordsScreen
 import com.example.dictionary.presentation.ui.myWords.MyWordsViewModel
 import com.example.dictionary.presentation.ui.onboarding.Onboarding
@@ -110,6 +112,13 @@ fun NavGraph(
             )
 
             myWords(
+                darkTheme = darkTheme,
+                isNetworkAvailable = isNetworkAvailable,
+                navController = navController,
+                width = constraints.maxWidth,
+            )
+
+            myRhymes(
                 darkTheme = darkTheme,
                 isNetworkAvailable = isNetworkAvailable,
                 navController = navController,
@@ -242,6 +251,8 @@ fun NavGraphBuilder.searchScreen(
     }
 }
 
+
+
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 fun NavGraphBuilder.myWords(
@@ -295,6 +306,58 @@ fun NavGraphBuilder.myWords(
                 }
             }
         )
+    }
+}
+
+@ExperimentalMaterialApi
+@ExperimentalAnimationApi
+fun NavGraphBuilder.myRhymes(
+    darkTheme: MutableState<Boolean>,
+    isNetworkAvailable: MutableState<Boolean>,
+    navController: NavHostController,
+    width: Int,
+){
+    composable(
+        route = Screen.MY_RHYMES_SCREEN.route,
+        enterTransition = { _, _ ->
+            fadeIn(animationSpec = tween(300))
+        },
+        popExitTransition = { _, _ ->
+            fadeOut(animationSpec = tween(300))
+        },
+        exitTransition = { _, _ ->
+            slideOutHorizontally(
+                targetOffsetX = { -width },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeOut(animationSpec = tween(300))
+        },
+        popEnterTransition = { _, _ ->
+            slideInHorizontally(
+                initialOffsetX = { -width },
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            ) + fadeIn(animationSpec = tween(300))
+        },
+    ){ backStackEntry: NavBackStackEntry ->
+        val factory = HiltViewModelFactory(
+            LocalContext.current, backStackEntry
+        )
+        val viewModel: MyRhymesViewModel = viewModel(
+            key = "MyRhymesViewModel",
+            factory = factory
+        )
+        MyRhymesScreen(
+            isDark = darkTheme,
+            isNetworkAvailable = isNetworkAvailable,
+            viewModel = viewModel
+        ) {
+
+        }
     }
 }
 

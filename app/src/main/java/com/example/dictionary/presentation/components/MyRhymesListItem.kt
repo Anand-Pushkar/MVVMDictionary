@@ -64,13 +64,13 @@ fun MyRhymesListItem(
                 text = "Extravaganza"
             )
             Text(
-                text = "1, 2, 3 and 5 syllables rhymes",
-                //maxLines = 2,
-                //overflow = TextOverflow.Ellipsis,
+                text = "1, 2, 3, 4, 5, 6, 7, 8, 9 and 10 syllable rhymes",
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.h5,
                 modifier = Modifier
-                    .padding(start = 48.dp, end = 16.dp, bottom = 16.dp)
+                    .padding(start = 48.dp, end = 32.dp, bottom = 16.dp)
                     .background(color = MaterialTheme.colors.primary)
                     .constrainAs(syllables) {
                         start.linkTo(parent.start)
@@ -82,11 +82,12 @@ fun MyRhymesListItem(
                 color = MaterialTheme.colors.secondary,
                 modifier = Modifier
                     .fillMaxHeight()
+                    .padding(end = 24.dp)
                     .width(2.dp)
                     .constrainAs(verticalLine) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
-                        start.linkTo(syllables.end)
+                        end.linkTo(parent.end)
                     },
             )
 

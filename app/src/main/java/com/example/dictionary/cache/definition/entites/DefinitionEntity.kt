@@ -1,11 +1,11 @@
-package com.example.dictionary.cache.definition.model
+package com.example.dictionary.cache.definition.entites
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "myWords")
-class DefinitionEntity(
+data class DefinitionEntity(
 
     // Value from API
     @PrimaryKey(autoGenerate = false)
@@ -42,18 +42,3 @@ class DefinitionEntity(
 
 )
 
-@Entity(tableName = "myWords")
-class DefinitionEntityMinimal(
-    // Value from API
-    @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "word")
-    val word: String,
-
-    // generated value for DefinitionMinimal Model
-    @ColumnInfo(name = "pronunciation")
-    val pronunciation: String,
-
-    // generated value for DefinitionMinimal Model
-    @ColumnInfo(name = "statement")
-    val statement: String,
-)

@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -35,11 +34,9 @@ import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.YellowTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.util.RHYME
-import com.example.dictionary.util.SAD_FACE
 import com.example.dictionary.util.TAG
 import java.util.*
 
-val isFavourite = mutableStateOf(false)
 
 @RequiresApi(Build.VERSION_CODES.N)
 @ExperimentalStdlibApi
@@ -67,7 +64,6 @@ fun RhymeDetailScreen(
         }
 
         val rhymes = viewModel.rhymes.value
-        val rhymesMap = viewModel.rhymesMap.value
         val loading = viewModel.loading.value
         val scaffoldState = rememberScaffoldState()
         val dialogQueue = viewModel.dialogQueue
@@ -77,8 +73,8 @@ fun RhymeDetailScreen(
             darkTheme = isDark,
             isNetworkAvailable = isNetworkAvailable,
             scaffoldState = scaffoldState,
-            dialogQueue = dialogQueue.queue.value, // replace with the reference created in the viewModel
-            displayProgressBar = false, // replace with loading
+            dialogQueue = dialogQueue.queue.value,
+            displayProgressBar = loading,
         ) {
             Scaffold(
                 modifier = Modifier
@@ -98,12 +94,17 @@ fun RhymeDetailScreen(
                         onLoad = onLoad,
                         onNavigateToSearchScreen = onNavigateToSearchScreen,
                         rhymes = rhymes,
+                        addToFavorites = {
+                            viewModel.onTriggerEvent(RhymeDetailScreenEvent.AddToFavoritesEvent(scaffoldState))
+                        },
+                        removeFromFavorites = {
+                            viewModel.onTriggerEvent(RhymeDetailScreenEvent.RemoveFromFavoritesEvent(scaffoldState ))
+                        }
                     )
                     MainCard(
                         loading = loading,
                         onLoad = onLoad,
                         rhymes = rhymes,
-                        rhymesMap = rhymesMap,
                         onNavigationToDefinitionDetailScreen = onNavigationToDefinitionDetailScreen
                     )
                 }
@@ -112,6 +113,7 @@ fun RhymeDetailScreen(
     }
 }
 
+@ExperimentalStdlibApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @Composable
@@ -121,6 +123,8 @@ fun BgCard(
     onLoad: Boolean,
     onNavigateToSearchScreen: (String) -> Unit,
     rhymes: Rhymes?,
+    addToFavorites: () -> Unit,
+    removeFromFavorites: () -> Unit
 ) {
 
     Surface(
@@ -153,7 +157,7 @@ fun BgCard(
                 )
             } else rhymes?.let { rhymes ->
 
-                if (!rhymes.rhyme.isNullOrEmpty()) {
+                if (!rhymes.rhymeList.isNullOrEmpty()) {
 
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
@@ -177,7 +181,7 @@ fun BgCard(
                             style = MaterialTheme.typography.h5.copy(color = MaterialTheme.colors.onPrimary)
                         )
 
-                        val resource: Painter = if (isFavourite.value) {
+                        val resource: Painter = if (rhymes.isFavorite) {
                             painterResource(id = R.drawable.ic_star_red)
                         } else {
                             painterResource(
@@ -194,7 +198,11 @@ fun BgCard(
                                 .height(32.dp)
                                 .clickable(
                                     onClick = {
-                                        isFavourite.value = !isFavourite.value
+                                        if(!rhymes.isFavorite){
+                                            addToFavorites()
+                                        }else{
+                                            removeFromFavorites()
+                                        }
                                     },
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() }
@@ -210,15 +218,6 @@ fun BgCard(
                         text = "Invalid Search!",
                         style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                     )
-//                    Text(
-//                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
-//                        text = rhymes.mainWord.replaceFirstChar {
-//                            if (it.isLowerCase()) it.titlecase(
-//                                Locale.getDefault()
-//                            ) else it.toString()
-//                        },
-//                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
-//                    )
                 }
             }
         }
@@ -232,11 +231,10 @@ fun MainCard(
     loading: Boolean,
     onLoad: Boolean,
     rhymes: Rhymes?,
-    rhymesMap: Map<String, List<Rhyme>>?,
     onNavigationToDefinitionDetailScreen: (String) -> Unit,
 ) {
 
-    Log.d(TAG, "MainCard: ${rhymesMap}")
+    Log.d(TAG, "MainCard: ${rhymes?.syllableInfo}")
     Surface(
         color = MaterialTheme.colors.primary,
         modifier = Modifier
@@ -258,31 +256,29 @@ fun MainCard(
             )
         } else if (!loading && rhymes == null && onLoad) {
             NothingHere()
-        } else rhymes?.let {
+        } else rhymes?.let { rhymes ->
 
-            if (!rhymesMap.isNullOrEmpty()) {
+            if (!rhymes.rhymesMap.isNullOrEmpty()) {
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 48.dp, top = 8.dp)
-                ) {
-                    rhymesMap.forEach { (numSyllable, rhymes) ->
-                        item {
-                            Section(
-                                type = "$numSyllable syllable",
-                                rhymes = rhymes,
-                                onNavigationToDefinitionDetailScreen = onNavigationToDefinitionDetailScreen
-                            )
+                rhymes.rhymesMap?.let { map ->
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 48.dp, top = 8.dp)
+                    ) {
+                        map.forEach { (numSyllable, rhymes) ->
+                            item {
+                                Section(
+                                    type = "$numSyllable syllable",
+                                    rhymes = rhymes,
+                                    onNavigationToDefinitionDetailScreen = onNavigationToDefinitionDetailScreen
+                                )
+                            }
                         }
                     }
                 }
             } else {
                 NothingHere()
-//                NothingHere(
-//                    face = SAD_FACE,
-//                    text = "Rhymes not found!"
-//                )
             }
         }
     }

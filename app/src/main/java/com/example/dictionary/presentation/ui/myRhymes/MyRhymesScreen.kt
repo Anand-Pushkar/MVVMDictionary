@@ -11,6 +11,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dictionary.presentation.components.GenericTitleBar
 import com.example.dictionary.presentation.components.MyRhymesListItem
 import com.example.dictionary.presentation.theme.YellowTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
@@ -57,7 +58,7 @@ fun MyRhymesScreen(
                         .fillMaxSize()
                 ) {
                     item {
-                        TopRhymeBar()
+                        GenericTitleBar(title = "My Rhymes")
                     }
 
                     itemsIndexed(myRhymes){ index, rhyme ->
@@ -87,20 +88,3 @@ fun MyRhyme(
     }
 }
 
-
-@Composable
-fun TopRhymeBar() {
-    Row(
-        modifier = Modifier.padding(bottom = 16.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp),
-            text = "My Rhymes",
-            style = MaterialTheme.typography.h2.copy(
-                fontSize = 32.sp,
-                color = MaterialTheme.colors.primaryVariant
-            ),
-        )
-    }
-}

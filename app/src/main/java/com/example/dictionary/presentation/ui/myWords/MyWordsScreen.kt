@@ -15,10 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.dictionary.R
 import com.example.dictionary.domain.model.definition.DefinitionMinimal
-import com.example.dictionary.presentation.components.LoadingListShimmer
-import com.example.dictionary.presentation.components.NothingHere
-import com.example.dictionary.presentation.components.OutlinedAvatar
-import com.example.dictionary.presentation.components.StaggeredVerticalGrid
+import com.example.dictionary.presentation.components.*
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
@@ -73,7 +70,7 @@ fun MyWordsScreen(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                 ) {
-                    TopWordBar()
+                    GenericTitleBar(title = "My Words")
                     if (loading && myWordsList == null){
                         // shimmer
                         Log.d(TAG, "MyWordsScreen: SHIMMER")
@@ -116,23 +113,6 @@ fun MyWordsScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun TopWordBar() {
-    Row(
-        modifier = Modifier.padding(bottom = 16.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp),
-            text = "My Words",
-            style = MaterialTheme.typography.h2.copy(
-                fontSize = 32.sp,
-                color = MaterialTheme.colors.primaryVariant
-            ),
-        )
     }
 }
 

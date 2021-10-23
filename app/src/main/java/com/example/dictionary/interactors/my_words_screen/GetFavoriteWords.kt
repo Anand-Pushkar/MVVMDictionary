@@ -2,11 +2,9 @@ package com.example.dictionary.interactors.my_words_screen
 
 import android.util.Log
 import com.example.dictionary.cache.definition.DefinitionDao
-import com.example.dictionary.cache.definition.model.DefinitionEntityMapper
+import com.example.dictionary.cache.definition.mapper.DefinitionEntityMapper
 import com.example.dictionary.domain.data.DataState
 import com.example.dictionary.domain.model.definition.DefinitionMinimal
-import com.example.dictionary.network.WordService
-import com.example.dictionary.network.definition.model.DefinitionDtoMapper
 import com.example.dictionary.util.TAG
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

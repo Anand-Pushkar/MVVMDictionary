@@ -2,7 +2,7 @@ package com.example.dictionary.interactors.definition_detail_screen
 
 import android.util.Log
 import com.example.dictionary.cache.definition.DefinitionDao
-import com.example.dictionary.cache.definition.model.DefinitionEntityMapper
+import com.example.dictionary.cache.definition.mapper.DefinitionEntityMapper
 import com.example.dictionary.domain.data.DataState
 import com.example.dictionary.domain.model.definition.Definition
 import com.example.dictionary.network.WordService
@@ -30,7 +30,6 @@ class GetDefinitions(
             val def = getWordFromCache(query)
 
             if(def != null){ // if cache holds the definition
-                Log.d(TAG, "execute: getting ${def.word} from cache || def.isFavorite = ${def.isFavorite}")
                 emit(DataState.success<Definition>(def))
             }
             else{ // get definition from network
@@ -38,7 +37,6 @@ class GetDefinitions(
                     val defs = getDefinitionsFromNetwork(query)
                     defs.forEach { def ->
                         if(def.word.compareTo(query.lowercase()) == 0){
-                            Log.d(TAG, "execute: getting ${def.word} from network")
                             emit(DataState.success<Definition>(def))
                         }else{
                             emit(DataState.error<Definition>("Invalid Search"))

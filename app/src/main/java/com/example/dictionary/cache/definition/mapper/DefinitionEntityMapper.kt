@@ -1,5 +1,7 @@
-package com.example.dictionary.cache.definition.model
+package com.example.dictionary.cache.definition.mapper
 
+import com.example.dictionary.cache.definition.entites.DefinitionEntity
+import com.example.dictionary.cache.definition.response.DefinitionEntityMinimalResponse
 import com.example.dictionary.domain.model.definition.Definition
 import com.example.dictionary.domain.model.definition.DefinitionMinimal
 import com.example.dictionary.domain.util.DomainMapper
@@ -19,7 +21,7 @@ class DefinitionEntityMapper: DomainMapper<DefinitionEntity, Definition> {
 
     // for MyWords we only need what DefinitionMinimal holds,
     // so we will be mapping from DefinitionEntity to DefinitionMinimal.
-    fun mapToDomainMinimalModel(model: DefinitionEntityMinimal): DefinitionMinimal {
+    fun mapToDomainMinimalModel(model: DefinitionEntityMinimalResponse): DefinitionMinimal {
         return DefinitionMinimal(
             word = model.word,
             pronunciation = model.pronunciation,
@@ -44,7 +46,7 @@ class DefinitionEntityMapper: DomainMapper<DefinitionEntity, Definition> {
         return initial.map { mapToDomainModel(it) }
     }
 
-    fun toDomainMinimalList(initial: List<DefinitionEntityMinimal>): List<DefinitionMinimal>{
+    fun toDomainMinimalList(initial: List<DefinitionEntityMinimalResponse>): List<DefinitionMinimal>{
         return initial.map { mapToDomainMinimalModel(it) }
     }
 

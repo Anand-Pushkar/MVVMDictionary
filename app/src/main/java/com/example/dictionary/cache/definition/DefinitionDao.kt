@@ -1,8 +1,8 @@
 package com.example.dictionary.cache.definition
 
 import androidx.room.*
-import com.example.dictionary.cache.definition.model.DefinitionEntity
-import com.example.dictionary.cache.definition.model.DefinitionEntityMinimal
+import com.example.dictionary.cache.definition.entites.DefinitionEntity
+import com.example.dictionary.cache.definition.response.DefinitionEntityMinimalResponse
 
 
 @Dao
@@ -18,7 +18,7 @@ interface DefinitionDao {
 
     // get a list of all the favorite words with minimal details
     @Query("SELECT word, pronunciation, statement FROM myWords")
-    suspend fun getFavoriteList(): List<DefinitionEntityMinimal>?
+    suspend fun getFavoriteList(): List<DefinitionEntityMinimalResponse>?
 
     // remove a word from the table
     @Delete

@@ -2,7 +2,7 @@ package com.example.dictionary.interactors.definition_detail_screen
 
 import android.util.Log
 import com.example.dictionary.cache.definition.DefinitionDao
-import com.example.dictionary.cache.definition.model.DefinitionEntityMapper
+import com.example.dictionary.cache.definition.mapper.DefinitionEntityMapper
 import com.example.dictionary.domain.data.DataState
 import com.example.dictionary.domain.model.definition.Definition
 import com.example.dictionary.network.WordService
@@ -20,7 +20,7 @@ class RemoveFromFavoriteWords(
     fun execute(
         definition: Definition,
         isNetworkAvailable: Boolean,
-    ): Flow<DataState<Definition>> = flow{
+    ): Flow<DataState<Definition>> = flow {
 
         try {
             // loading
@@ -37,7 +37,7 @@ class RemoveFromFavoriteWords(
                 definitionDao.deleteWord(entityMapper.mapFromDomainModel(definition))
             }
 
-            // get recipe from network and emit
+            // get the definition from network and emit
             if(isNetworkAvailable){
                 val defs = getDefinitionsFromNetwork(definition.word)
                 defs.forEach { def ->
@@ -46,10 +46,8 @@ class RemoveFromFavoriteWords(
                     }
                 }
             }else{
-                if (definition != null) {
-                    definition.isFavorite = false
-                    emit(DataState.success<Definition>(definition))
-                }
+                definition.isFavorite = false
+                emit(DataState.success<Definition>(definition))
             }
         }catch (e: Exception){
             Log.e(TAG, "execute: ${e.message}")

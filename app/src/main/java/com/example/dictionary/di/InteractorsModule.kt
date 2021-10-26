@@ -7,6 +7,7 @@ import com.example.dictionary.cache.rhyme.mapper.RhymeEntityMapper
 import com.example.dictionary.interactors.definition_detail_screen.AddToFavoriteWords
 import com.example.dictionary.interactors.definition_detail_screen.GetDefinitions
 import com.example.dictionary.interactors.definition_detail_screen.RemoveFromFavoriteWords
+import com.example.dictionary.interactors.my_rhymes_screen.GetFavoriteRhymes
 import com.example.dictionary.interactors.my_words_screen.GetFavoriteWords
 import com.example.dictionary.interactors.rhyme_detail_screen.AddToFavoriteRhymes
 import com.example.dictionary.interactors.rhyme_detail_screen.GetRhymes
@@ -142,10 +143,24 @@ object InteractorsModule {
     fun provideGetFavoriteWords(
         entityMapper: DefinitionEntityMapper,
         definitionDao: DefinitionDao
-    ): GetFavoriteWords{
+    ): GetFavoriteWords {
         return GetFavoriteWords(
             entityMapper = entityMapper,
             definitionDao = definitionDao
+        )
+    }
+
+    // my rhymes screen
+    @ExperimentalStdlibApi
+    @ViewModelScoped
+    @Provides
+    fun provideGetFavoriteRhymes(
+        entityMapper: RhymeEntityMapper,
+        rhymeDao: RhymeDao
+    ): GetFavoriteRhymes {
+        return GetFavoriteRhymes(
+            entityMapper = entityMapper,
+            rhymeDao = rhymeDao
         )
     }
 }

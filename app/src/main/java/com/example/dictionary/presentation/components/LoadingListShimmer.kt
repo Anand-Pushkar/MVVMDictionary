@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,7 @@ fun LoadingListShimmer(
     repetition: Int = 1,
     linePadding: PaddingValues = PaddingValues(start = 8.dp, end = 8.dp),
     lineWidth: Float = 1f,
+    shape: Shape = MaterialTheme.shapes.small
 ){
 
     BoxWithConstraints(
@@ -80,7 +83,8 @@ fun LoadingListShimmer(
                 padding = padding,
                 lines = lines,
                 linePadding = linePadding,
-                lineWidth = lineWidth
+                lineWidth = lineWidth,
+                shape = shape
             )
         }else{
             LazyColumn {
@@ -97,7 +101,8 @@ fun LoadingListShimmer(
                         padding = padding,
                         lines = lines,
                         linePadding = linePadding,
-                        lineWidth = lineWidth
+                        lineWidth = lineWidth,
+                        shape = shape
                     )
                 }
             }

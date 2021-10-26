@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.ui.myWords
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,12 +8,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.ViewModel
 import com.example.dictionary.R
 import com.example.dictionary.domain.model.definition.DefinitionMinimal
 import com.example.dictionary.presentation.components.*
@@ -20,8 +23,10 @@ import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.util.TAG
+import java.util.*
 
 
+@SuppressLint("UnrememberedMutableState")
 @ExperimentalMaterialApi
 @Composable
 fun MyWordsScreen(
@@ -31,8 +36,13 @@ fun MyWordsScreen(
     onNavigateToDetailScreen: (String) -> Unit
 ) {
 
-    // fire a one-off event to get the definitions from cache
+    // use this so viewModel can observe lifecycle events of this composable
+    DisposableEffect(key1 = viewModel) {
+        viewModel.onStart()
+        onDispose { viewModel.onStop() }
+    }
 
+    // fire a one-off event to get the definitions from cache
     val onLoad = viewModel.onLoad.value
     if (!onLoad) {
         viewModel.onLoad.value = true
@@ -102,12 +112,10 @@ fun MyWordsScreen(
                                 WordCard(
                                     myWord = myWord,
                                     onNavigateToDetailScreen = { route ->
-                                        viewModel.onLoad.value = false
                                         onNavigateToDetailScreen(route)
                                     }
                                 )
                             }
-
                         }
                     }
                 }
@@ -122,6 +130,7 @@ fun WordCard(
     myWord: DefinitionMinimal,
     onNavigateToDetailScreen: (String) -> Unit
 ) {
+    Log.d(TAG, "WordCard: ---------=======-------")
     Card(
         onClick = {
             val route = Screen.DEFINITION_DETAIL_ROUTE.withArgs(myWord.word)
@@ -138,7 +147,7 @@ fun WordCard(
                 .fillMaxSize()
         ) {
             Text(
-                text = myWord.word,
+                text = myWord.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.h2,
                 textAlign = TextAlign.Center,

@@ -309,6 +309,7 @@ fun NavGraphBuilder.myWords(
     }
 }
 
+@ExperimentalStdlibApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 fun NavGraphBuilder.myRhymes(
@@ -354,10 +355,14 @@ fun NavGraphBuilder.myRhymes(
         MyRhymesScreen(
             isDark = darkTheme,
             isNetworkAvailable = isNetworkAvailable,
-            viewModel = viewModel
-        ) {
-
-        }
+            viewModel = viewModel,
+            onNavigateToDetailScreen = { route ->
+                // In order to discard duplicated navigation events, we check the Lifecycle
+                if (backStackEntry.lifecycleIsResumed()) {
+                    navController.navigate(route)
+                }
+            }
+        )
     }
 }
 

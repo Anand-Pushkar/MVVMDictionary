@@ -162,9 +162,10 @@ fun BgCard(
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
                         text = rhymes.mainWord.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.getDefault()
-                            ) else it.toString()
+                            if (it.isLowerCase())
+                                it.titlecase(Locale.getDefault())
+                            else
+                                it.toString()
                         },
                         style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                     )

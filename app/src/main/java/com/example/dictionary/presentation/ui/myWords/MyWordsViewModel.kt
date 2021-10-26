@@ -30,8 +30,17 @@ constructor(
     val dialogQueue = DialogQueue()
     var loading = mutableStateOf(false)
     val onLoad: MutableState<Boolean> = mutableStateOf(false)
-    val snackbarController = SnackbarController(viewModelScope)
-    
+
+    fun onStart() {
+        // start task - the composable has entered the composition
+        myWordsList.value = null // shimmer only shows when this is null
+        onLoad.value = false // to get a fresh list from cache
+    }
+
+    fun onStop() {
+        // cancel task - the composable has left the composition
+    }
+
 
     @ExperimentalMaterialApi
     fun onTriggerEvent(event: MyWordsScreenEvent){
@@ -58,8 +67,8 @@ constructor(
 
 
             // data
-            dataState.data?.let { favoriteWords ->
-                myWordsList.value = favoriteWords
+            dataState.data?.let { myWords ->
+                myWordsList.value = myWords
             }
 
             // error

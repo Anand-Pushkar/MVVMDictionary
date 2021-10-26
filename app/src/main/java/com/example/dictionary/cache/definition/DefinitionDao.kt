@@ -3,6 +3,7 @@ package com.example.dictionary.cache.definition
 import androidx.room.*
 import com.example.dictionary.cache.definition.entites.DefinitionEntity
 import com.example.dictionary.cache.definition.response.DefinitionEntityMinimalResponse
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao

@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation
 
+//import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
@@ -11,7 +12,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -19,24 +19,18 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.plusAssign
-import com.example.dictionary.presentation.components.SplashScreen
-import com.example.dictionary.presentation.components.bottomNavigationComponent.DictionaryBottomBar
 import com.example.dictionary.presentation.navigation.NavGraph
 import com.example.dictionary.presentation.theme.TabTheme
 import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.presentation.ui.util.DialogQueue
-import com.example.dictionary.presentation.util.currentTabRoute
 import com.example.dictionary.presentation.util.currentTab
+import com.example.dictionary.presentation.util.currentTabRoute
 import com.example.dictionary.util.TAG
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.navigation.animation.AnimatedComposeNavigator
-
-//import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.navigation.animation.navigation
 
 
 @ExperimentalStdlibApi
@@ -47,7 +41,6 @@ import com.google.accompanist.navigation.animation.navigation
 @ExperimentalFoundationApi
 @Composable
 fun DictionaryApp(
-    showSplashScreen: MutableState<Boolean>,
     isDarkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,

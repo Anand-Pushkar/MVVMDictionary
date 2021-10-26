@@ -6,9 +6,13 @@ import com.example.dictionary.cache.definition.mapper.DefinitionEntityMapper
 import com.example.dictionary.domain.data.DataState
 import com.example.dictionary.domain.model.definition.DefinitionMinimal
 import com.example.dictionary.util.TAG
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class GetFavoriteWords(
     val entityMapper: DefinitionEntityMapper,
@@ -20,7 +24,7 @@ class GetFavoriteWords(
             // loading
             emit(DataState.loading<List<DefinitionMinimal>>())
 
-            delay(2000)
+            delay(1000)
 
             // get favorite words from cache
             val myWords = getFavoriteWordsFromCache()
@@ -30,7 +34,7 @@ class GetFavoriteWords(
                 emit(DataState.success<List<DefinitionMinimal>>(myWords))
             }
             else{
-                throw Exception("Unable to get the recipe from the cache.")
+                throw Exception("Unable to get the words from the cache.")
             }
 
         }catch (e: Exception){
@@ -44,5 +48,6 @@ class GetFavoriteWords(
             entityMapper.toDomainMinimalList(favoriteWordsList)
         }
     }
+
 
 }

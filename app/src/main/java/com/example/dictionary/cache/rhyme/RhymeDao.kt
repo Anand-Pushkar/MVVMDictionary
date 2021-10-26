@@ -29,7 +29,7 @@ interface RhymeDao {
 
     // get all the favourite rhymes
     @Query("SELECT * FROM myRhymes")
-    suspend fun getMyRhymes(): List<MyRhymeEntity>
+    suspend fun getMyRhymes(): List<MyRhymeEntity>?
 
     // get a list of all the rhymes
     @Query("SELECT * FROM rhymes")

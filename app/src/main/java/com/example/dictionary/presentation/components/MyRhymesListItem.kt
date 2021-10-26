@@ -11,11 +11,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.dictionary.domain.model.rhyme.RhymesMinimal
+import com.example.dictionary.presentation.navigation.Screen
+import java.util.*
 
 @ExperimentalMaterialApi
 @Composable
 fun MyRhymesListItem(
-    //course: Course, // replace with instance of rhymeMinimal Maybe
+    rhyme: RhymesMinimal,
     onNavigateToDetailScreen: (String) -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
@@ -26,7 +29,10 @@ fun MyRhymesListItem(
         shape = shape,
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.primary,
-        onClick = { onNavigateToDetailScreen }
+        onClick = {
+            val route = Screen.RHYME_DETAIL_ROUTE.withArgs(rhyme.word)
+            onNavigateToDetailScreen(route)
+        }
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -57,10 +63,15 @@ fun MyRhymesListItem(
                     .background(color = MaterialTheme.colors.primary),
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.h2,
-                text = "Extravaganza"
+                text = rhyme.word.replaceFirstChar {
+                    if (it.isLowerCase())
+                        it.titlecase(Locale.getDefault())
+                    else
+                        it.toString()
+                }
             )
             Text(
-                text = "1, 2, 3, 4 and 10 syllable rhymes",
+                text = rhyme.syllableInfo,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colors.onPrimary,

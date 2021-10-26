@@ -215,7 +215,7 @@ private val LightElevation = Elevations(card = 8.dp)
 
 private val DarkElevation = Elevations(card = 16.dp)
 
-private val LightImages = Images(logo = R.drawable.ic_logo)
+private val LightImages = Images(logo = R.drawable.logo)
 
 //private val DarkImages = Images(lockupLogo = R.drawable.ic_lockup_white)
 

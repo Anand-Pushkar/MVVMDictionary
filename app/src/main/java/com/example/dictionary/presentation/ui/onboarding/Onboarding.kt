@@ -94,7 +94,7 @@ private fun AppBar() {
             .statusBarsPadding()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_logo),
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = null,
             modifier = Modifier.padding(16.dp)
         )

@@ -17,8 +17,8 @@
 
     <!-- splash screen theme -->
     <style name="Theme.MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/pink_dark</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_headphone</item>
+        <item name="windowSplashScreenBackground">#8f0759</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
         <item name="postSplashScreenTheme">@style/Theme.Dictionary.NoActionBar</item>
     </style>
 

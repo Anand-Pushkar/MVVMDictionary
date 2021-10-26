@@ -14,7 +14,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.view.WindowCompat
 import com.example.dictionary.R
 import com.example.dictionary.dataStore.SettingsDataStore
-import com.example.dictionary.presentation.components.SplashScreen
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.util.MyConnectivityManager
 import com.example.dictionary.util.TAG
@@ -72,7 +71,6 @@ class MainActivity : ComponentActivity() {
                             val startDestination = getStartDestination(onboardingComplete.value)
 
                             DictionaryApp(
-                                showSplashScreen = settingsDataStore.showSplashScreen,
                                 isDarkTheme = isDark,
                                 isNetworkAvailable = myConnectivityManager.isNetworkAvailable,
                                 onToggleTheme = { settingsDataStore.toggleTheme() },
@@ -90,7 +88,6 @@ class MainActivity : ComponentActivity() {
                 val startDestination = getStartDestination(onboardingComplete.value)
 
                 DictionaryApp(
-                    showSplashScreen = settingsDataStore.showSplashScreen,
                     isDarkTheme = isDark,
                     isNetworkAvailable = myConnectivityManager.isNetworkAvailable,
                     onToggleTheme = { settingsDataStore.toggleTheme() },

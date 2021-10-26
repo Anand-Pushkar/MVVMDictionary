@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -28,6 +29,7 @@ fun ShimmerCardItem(
     lines: Int,
     linePadding: PaddingValues,
     lineWidth: Float,
+    shape: Shape
 ){
 
     val brush = Brush.linearGradient(
@@ -41,7 +43,7 @@ fun ShimmerCardItem(
     ) {
         // card
         Surface(
-            shape = MaterialTheme.shapes.small,
+            shape = shape,
             modifier = Modifier
                 .fillMaxWidth(cardWidth)
                 .padding(cardPadding)

@@ -26,9 +26,9 @@ import javax.inject.Inject
 class DefinitionDetailViewModel
 @Inject
 constructor(
-    val getDefinitions: GetDefinitions,
-    val addToFavoriteWords: AddToFavoriteWords,
-    val removeFromFavoriteWords: RemoveFromFavoriteWords,
+    private val getDefinitions: GetDefinitions,
+    private val addToFavoriteWords: AddToFavoriteWords,
+    private val removeFromFavoriteWords: RemoveFromFavoriteWords,
     private val myConnectivityManager: MyConnectivityManager,
 ) : ViewModel() {
 

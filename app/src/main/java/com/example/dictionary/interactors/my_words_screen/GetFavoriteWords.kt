@@ -24,7 +24,7 @@ class GetFavoriteWords(
             // loading
             emit(DataState.loading<List<DefinitionMinimal>>())
 
-            delay(1000)
+            delay(500)
 
             // get favorite words from cache
             val myWords = getFavoriteWordsFromCache()

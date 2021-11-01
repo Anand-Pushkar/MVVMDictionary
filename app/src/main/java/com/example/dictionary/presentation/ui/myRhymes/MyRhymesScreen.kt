@@ -15,10 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dictionary.domain.model.rhyme.RhymesMinimal
-import com.example.dictionary.presentation.components.GenericTitleBar
-import com.example.dictionary.presentation.components.LoadingListShimmer
-import com.example.dictionary.presentation.components.MyRhymesListItem
-import com.example.dictionary.presentation.components.NothingHere
+import com.example.dictionary.presentation.components.*
 import com.example.dictionary.presentation.theme.YellowTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.presentation.ui.myWords.MyWordsScreenEvent
@@ -39,13 +36,6 @@ fun MyRhymesScreen(
     DisposableEffect(key1 = viewModel) {
         viewModel.onStart()
         onDispose { viewModel.onStop() }
-    }
-
-    // fire a one-off event to get the rhymes from cache
-    val onLoad = viewModel.onLoad.value
-    if (!onLoad) {
-        viewModel.onLoad.value = true
-        viewModel.onTriggerEvent(MyRhymesScreenEvent.GetFavoriteRhymesEvent)
     }
 
     val myRhymesList = viewModel.myRhymesList.value
@@ -71,7 +61,7 @@ fun MyRhymesScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(top = 48.dp, bottom = 48.dp)
+                    .padding(GetPadding())
                     .verticalScroll(rememberScrollState())
             ) {
                 GenericTitleBar(title = "My Rhymes")
@@ -91,7 +81,7 @@ fun MyRhymesScreen(
                         }
 
                     }
-                } else if (!loading && myRhymesList.isNullOrEmpty() && onLoad) {
+                } else if (!loading && myRhymesList.isNullOrEmpty()) {
                     NothingHere()
                 } else myRhymesList?.let { myRhymes ->
 
@@ -100,7 +90,6 @@ fun MyRhymesScreen(
                             rhyme = rhyme,
                             index = index,
                             onNavigateToDetailScreen = { route ->
-                                viewModel.onLoad.value = false
                                 onNavigateToDetailScreen(route)
                             }
                         )

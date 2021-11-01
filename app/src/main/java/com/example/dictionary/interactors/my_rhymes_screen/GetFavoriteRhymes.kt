@@ -22,7 +22,7 @@ class GetFavoriteRhymes(
             // loading
             emit(DataState.loading<List<RhymesMinimal>>())
 
-            delay(1000)
+            delay(500)
 
             // get favorite rhymes from the cache
             val myRhymes = getFavoriteRhymesFromCache()

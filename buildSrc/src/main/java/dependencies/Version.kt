@@ -10,7 +10,7 @@ object Version{
     const val jvmTarget = "1.8"
 
     const val accompanist = "0.15.0"
-    const val animations = "0.16.0"
+    const val animations = "0.17.0"
 
     const val kotlin = "1.5.10"
     const val gradle = "7.1.0-alpha02"
@@ -30,7 +30,7 @@ object Version{
     const val hilt_lifecycle_viewmodel = "1.0.0-beta01"
     const val hilt_lifecycle = "1.0.0-beta01"
     const val nav_component = "2.3.4"
-    const val nav_compose = "2.4.0-alpha06"
+    const val nav_compose = "2.4.0-alpha07"
     const val hilt_navigation = "1.0.0-beta01"
     const val glide = "4.12.0"
     const val retrofit = "2.9.0"

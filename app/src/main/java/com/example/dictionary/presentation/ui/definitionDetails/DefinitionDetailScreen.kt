@@ -18,17 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.R
 import com.example.dictionary.domain.model.definition.Definition
-import com.example.dictionary.presentation.components.LoadingListShimmer
-import com.example.dictionary.presentation.components.NothingHere
-import com.example.dictionary.presentation.components.SearchAppBar
+import com.example.dictionary.presentation.components.*
 import com.example.dictionary.presentation.components.util.SnackbarController
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.util.DEFINITION
+import com.example.dictionary.util.LANDSCAPE
 import com.example.dictionary.util.SAD_FACE
 import com.example.dictionary.util.TAG
 import java.util.*
@@ -77,10 +77,13 @@ fun DefinitionDetailScreen(
                     scaffoldState.snackbarHostState
                 },
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) {
                     BgCard(
+                        modifier = Modifier
+                            .fillMaxHeight(if(GetScreenOrientation() == LANDSCAPE){ 0.55f } else { 0.3f }),
                         isDark = isDark,
                         onNavigateToSearchScreen = onNavigateToSearchScreen,
                         def = definition,
@@ -94,9 +97,10 @@ fun DefinitionDetailScreen(
                         }
                     )
                     MainCard(
+                        isDark = isDark,
                         def = definition,
                         loading = loading,
-                        onLoad = onLoad
+                        onLoad = onLoad,
                     )
                 }
             }
@@ -109,6 +113,7 @@ fun DefinitionDetailScreen(
 @ExperimentalComposeUiApi
 @Composable
 fun BgCard(
+    modifier: Modifier,
     isDark: MutableState<Boolean>,
     loading: Boolean,
     onLoad: Boolean,
@@ -123,12 +128,18 @@ fun BgCard(
         } else {
             MaterialTheme.colors.surface
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 48.dp)
+                .padding(
+                    top = if (GetScreenOrientation() == LANDSCAPE) {
+                        36.dp
+                    } else {
+                        48.dp
+                    }
+                )
         ) {
             SearchAppBar(
                 onNavigateToSearchScreen = onNavigateToSearchScreen,
@@ -141,68 +152,76 @@ fun BgCard(
                     cardWidth = 0.5f,
                     lineHeight = 24.dp,
                     lineWidth = 0.7f,
-                    cardPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 12.dp),
-                    linePadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                    cardPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp),
+                    lineSpace = if (GetScreenOrientation() == LANDSCAPE) { 16.dp } else { 48.dp }
                 )
             } else if (!loading && def == null && onLoad) {
                 // invalid search
                 Text(
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
-                    text = "Invalid Search!",
-                    style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onSecondary),
+                    modifier = Modifier.padding(start = 20.dp),
+                    text = "Invalid Search",
+                    style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                 )
             } else def?.let { def ->
 
                 if (def.defs != null) {
 
-                    Text(
-                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
-                        text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
-                        style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp, horizontal = 24.dp)
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-
                         Text(
-                            text = "IPA : [ ${def.pronunciation} ]",
-                            style = MaterialTheme.typography.h5.copy(color = MaterialTheme.colors.onPrimary),
+                            modifier = Modifier.padding(start = 20.dp),
+                            text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                            style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                         )
 
-                        val resource: Painter = if (def.isFavorite) {
-                            painterResource(id = R.drawable.ic_star_red)
-                        } else {
-                            painterResource(R.drawable.ic_star_white_border)
-                        }
-                        Image(
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .width(32.dp)
-                                .height(32.dp)
-                                .clickable(
-                                    onClick = {
-                                        if(!def.isFavorite) {
-                                            Log.d(TAG, "BgCard: def.isFavorite = ${def.isFavorite} == adding to favorites")
-                                            addToFavorites()
-                                        }else{
-                                            Log.d(TAG, "BgCard: def.isFavorite = ${def.isFavorite} == removing from favorites")
-                                            removeFromFavorites()
-                                        }
-                                    },
-                                    indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
-                                ),
-                            painter = resource,
-                            contentDescription = "Favorite"
-                        )
+                                .fillMaxWidth()
+                                .padding(
+                                    bottom = 8.dp,
+                                    start = 24.dp,
+                                    end = if (GetScreenOrientation() == LANDSCAPE) { 48.dp } else { 24.dp }
+                                )
+                        ) {
+
+                            Text(
+                                text = "IPA : [ ${def.pronunciation} ]",
+                                style = MaterialTheme.typography.h5.copy(color = MaterialTheme.colors.onPrimary),
+                            )
+
+                            val resource: Painter = if (def.isFavorite) {
+                                painterResource(id = R.drawable.ic_star_red)
+                            } else {
+                                painterResource(R.drawable.ic_star_white_border)
+                            }
+                            Image(
+                                modifier = Modifier
+                                    .width(32.dp)
+                                    .height(32.dp)
+                                    .clickable(
+                                        onClick = {
+                                            if (!def.isFavorite) {
+                                                addToFavorites()
+                                            } else {
+                                                removeFromFavorites()
+                                            }
+                                        },
+                                        indication = null,
+                                        interactionSource = remember { MutableInteractionSource() }
+                                    ),
+                                painter = resource,
+                                contentDescription = "Favorite"
+                            )
+                        }
                     }
+
                 } else {
                     Text(
-                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp),
+                        modifier = Modifier.padding(start = 20.dp),
                         text = def.word.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
                         style = MaterialTheme.typography.h1.copy(color = MaterialTheme.colors.onPrimary),
                     )
@@ -215,74 +234,89 @@ fun BgCard(
 
 @Composable
 fun MainCard(
+    isDark: MutableState<Boolean>,
     loading: Boolean,
     onLoad: Boolean,
     def: Definition?,
 ) {
-
     Surface(
-        color = MaterialTheme.colors.primary,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 260.dp),
-        shape = RoundedCornerShape(40.dp)
-            .copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize),
-        elevation = 16.dp
-    ) {
-        if (loading && def == null) {
-            LoadingListShimmer(
-                cardHeight = 30.dp,
-                cardWidth = 0.6f,
-                lineHeight = 24.dp,
-                lines = 3,
-                repetition = 3,
-                linePadding = PaddingValues(start = 32.dp, end = 8.dp)
-            )
-
-        } else if (!loading && def == null && onLoad) {
-            NothingHere()
-        } else def?.let { def ->
-
-            if (def.defs != null) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 48.dp, top = 8.dp)
-                ) {
-                    def.nouns?.let { nouns ->
-                        if (nouns.isNotEmpty()) {
-                            item {
-                                Section(type = "noun", list = nouns)
-                            }
-                        }
-                    }
-                    def.verbs?.let { verbs ->
-                        if (verbs.isNotEmpty()) {
-                            item {
-                                Section(type = "verb", list = verbs)
-                            }
-                        }
-                    }
-                    def.adjectives?.let { adjectives ->
-                        if (adjectives.isNotEmpty()) {
-                            item {
-                                Section(type = "adjective", list = adjectives)
-                            }
-                        }
-                    }
-                    def.adverbs?.let { adverbs ->
-                        if (adverbs.isNotEmpty()) {
-                            item {
-                                Section(type = "adverb", list = adverbs)
-                            }
-                        }
-                    }
-                }
-            } else {
-                NothingHere(
-                    face = SAD_FACE,
-                    text = "Definition not found!"
+        color = if (isDark.value) {
+            immersive_sys_ui
+        } else {
+            MaterialTheme.colors.surface
+        },
+        modifier = Modifier.fillMaxSize(),
+    ){
+        Surface(
+            color = MaterialTheme.colors.primary,
+            modifier = Modifier
+                .fillMaxSize(),
+            shape = RoundedCornerShape(40.dp)
+                .copy(bottomStart = ZeroCornerSize, bottomEnd = ZeroCornerSize),
+            elevation = 16.dp
+        ) {
+            if (loading && def == null) {
+                LoadingListShimmer(
+                    cardHeight = 30.dp,
+                    cardWidth = 0.6f,
+                    lineHeight = 24.dp,
+                    lines = 3,
+                    repetition = 3,
+                    linePadding = PaddingValues(start = 32.dp, end = 8.dp)
                 )
+
+            } else if (!loading && def == null && onLoad) {
+                NothingHere()
+            } else def?.let { def ->
+
+                if (def.defs != null) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                top = 8.dp,
+                                bottom = if (GetScreenOrientation() == LANDSCAPE) {
+                                    8.dp
+                                } else {
+                                    48.dp
+                                }
+                            )
+                    ) {
+                        def.nouns?.let { nouns ->
+                            if (nouns.isNotEmpty()) {
+                                item {
+                                    Section(type = "noun", list = nouns)
+                                }
+                            }
+                        }
+                        def.verbs?.let { verbs ->
+                            if (verbs.isNotEmpty()) {
+                                item {
+                                    Section(type = "verb", list = verbs)
+                                }
+                            }
+                        }
+                        def.adjectives?.let { adjectives ->
+                            if (adjectives.isNotEmpty()) {
+                                item {
+                                    Section(type = "adjective", list = adjectives)
+                                }
+                            }
+                        }
+                        def.adverbs?.let { adverbs ->
+                            if (adverbs.isNotEmpty()) {
+                                item {
+                                    Section(type = "adverb", list = adverbs)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    NothingHere(
+                        face = SAD_FACE,
+                        text = "Definition not found!"
+                    )
+                }
             }
         }
     }

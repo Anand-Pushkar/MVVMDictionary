@@ -1,6 +1,5 @@
 package com.example.dictionary.presentation
 
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +10,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.example.dictionary.R
 import com.example.dictionary.dataStore.SettingsDataStore
@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
-
 
     override fun onStart() {
         super.onStart()

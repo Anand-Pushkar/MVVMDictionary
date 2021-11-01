@@ -30,9 +30,9 @@ class RhymeDetailViewModel
 @ExperimentalStdlibApi
 @Inject
 constructor(
-    val getRhymes: GetRhymes,
-    val addToFavoriteRhymes: AddToFavoriteRhymes,
-    val removeFromFavoriteRhymes: RemoveFromFavoriteRhymes,
+    private val getRhymes: GetRhymes,
+    private val addToFavoriteRhymes: AddToFavoriteRhymes,
+    private val removeFromFavoriteRhymes: RemoveFromFavoriteRhymes,
     private val myConnectivityManager: MyConnectivityManager,
 ) : ViewModel() {
 

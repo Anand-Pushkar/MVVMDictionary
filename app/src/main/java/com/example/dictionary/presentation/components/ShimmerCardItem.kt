@@ -29,7 +29,8 @@ fun ShimmerCardItem(
     lines: Int,
     linePadding: PaddingValues,
     lineWidth: Float,
-    shape: Shape
+    shape: Shape,
+    lineSpace: Dp,
 ){
 
     val brush = Brush.linearGradient(
@@ -55,8 +56,9 @@ fun ShimmerCardItem(
                     .background(brush = brush)
             )
         }
+        // lines
         repeat(lines){
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.padding(top = lineSpace))
             Surface(
                 shape = MaterialTheme.shapes.small,
                 modifier = Modifier.padding(linePadding)

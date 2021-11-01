@@ -26,7 +26,8 @@ fun LoadingListShimmer(
     repetition: Int = 1,
     linePadding: PaddingValues = PaddingValues(start = 8.dp, end = 8.dp),
     lineWidth: Float = 1f,
-    shape: Shape = MaterialTheme.shapes.small
+    shape: Shape = MaterialTheme.shapes.small,
+    lineSpace: Dp = 16.dp
 ){
 
     BoxWithConstraints(
@@ -84,7 +85,8 @@ fun LoadingListShimmer(
                 lines = lines,
                 linePadding = linePadding,
                 lineWidth = lineWidth,
-                shape = shape
+                shape = shape,
+                lineSpace = lineSpace
             )
         }else{
             LazyColumn {
@@ -102,12 +104,11 @@ fun LoadingListShimmer(
                         lines = lines,
                         linePadding = linePadding,
                         lineWidth = lineWidth,
-                        shape = shape
+                        shape = shape,
+                        lineSpace = lineSpace
                     )
                 }
             }
         }
-
     }
-
 }

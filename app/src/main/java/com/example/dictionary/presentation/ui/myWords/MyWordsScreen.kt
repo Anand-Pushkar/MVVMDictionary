@@ -1,17 +1,18 @@
 package com.example.dictionary.presentation.ui.myWords
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.util.Log
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -23,7 +24,10 @@ import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
 import com.example.dictionary.util.TAG
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.math.roundToInt
 
 
 @SuppressLint("UnrememberedMutableState")
@@ -42,17 +46,11 @@ fun MyWordsScreen(
         onDispose { viewModel.onStop() }
     }
 
-    // fire a one-off event to get the definitions from cache
-    val onLoad = viewModel.onLoad.value
-    if (!onLoad) {
-        viewModel.onLoad.value = true
-        viewModel.onTriggerEvent(MyWordsScreenEvent.GetFavoriteWordsEvent)
-    }
-
     val myWordsList = viewModel.myWordsList.value
     val scaffoldState = rememberScaffoldState()
     val dialogQueue = viewModel.dialogQueue
     val loading = viewModel.loading.value
+    val comingBack = viewModel.comingBack
 
 
     BlueTheme(
@@ -73,22 +71,50 @@ fun MyWordsScreen(
         ) {
             BoxWithConstraints(
                 modifier = Modifier
-                    .padding(top = 48.dp, bottom = 48.dp)
+                    .padding(GetPadding())
             ) {
                 val height = constraints.maxHeight
+                val coroutineScope = rememberCoroutineScope()
+                val scrollState = rememberScrollState()
                 Column(
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(scrollState)
                 ) {
+
+                    if(comingBack.value){
+                        coroutineScope.launch {
+                            scrollState.scrollTo(viewModel.getListScrollPosition())
+                            if(scrollState.value == viewModel.getListScrollPosition()){
+                                viewModel.comingBack.value = false
+                            }
+                        }
+                    }else {
+                        if (!scrollState.isScrollInProgress){
+                            Log.d(TAG, "MyWordsScreen: here scroll not in progress")
+                            coroutineScope.launch {
+                                scrollState.scrollTo(viewModel.getListScrollPosition())
+                                if(scrollState.value == viewModel.getListScrollPosition()){
+                                    viewModel.onChangeScrollPosition(scrollState.value)
+                                }
+                            }
+
+                        }else {
+                            Log.d(TAG, "MyWordsScreen: scroll in progress")
+                            viewModel.onChangeScrollPosition(scrollState.value)
+                        }
+
+                    }
+
+
+
                     GenericTitleBar(title = "My Words")
                     if (loading && myWordsList == null){
                         // shimmer
-                        Log.d(TAG, "MyWordsScreen: SHIMMER")
                         StaggeredVerticalGrid(
                             maxColumnWidth = 220.dp,
                             modifier = Modifier.padding(4.dp)
                         ) {
-                            repeat(8){
+                            repeat(12){
                                 LoadingListShimmer(
                                     cardHeight = (200..260).random().dp,
                                     lines = 0,
@@ -98,7 +124,7 @@ fun MyWordsScreen(
                             }
                         }
                     }
-                    else if (!loading && myWordsList.isNullOrEmpty() && onLoad) {
+                    else if (!loading && myWordsList.isNullOrEmpty()) {
                         NothingHere(
                             modifier = Modifier.padding(top = (height / 8).dp),
                         )
@@ -108,10 +134,12 @@ fun MyWordsScreen(
                             maxColumnWidth = 220.dp,
                             modifier = Modifier.padding(4.dp)
                         ) {
-                            myWordsList.forEach { myWord ->
+                            
+                            myWordsList.forEachIndexed { index, myWord ->
                                 WordCard(
                                     myWord = myWord,
                                     onNavigateToDetailScreen = { route ->
+                                        viewModel.onChangeScrollPosition(scrollState.value)
                                         onNavigateToDetailScreen(route)
                                     }
                                 )
@@ -124,13 +152,14 @@ fun MyWordsScreen(
     }
 }
 
+
+
 @ExperimentalMaterialApi
 @Composable
 fun WordCard(
     myWord: DefinitionMinimal,
     onNavigateToDetailScreen: (String) -> Unit
 ) {
-    Log.d(TAG, "WordCard: ---------=======-------")
     Card(
         onClick = {
             val route = Screen.DEFINITION_DETAIL_ROUTE.withArgs(myWord.word)

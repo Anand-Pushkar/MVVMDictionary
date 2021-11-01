@@ -5,5 +5,7 @@ sealed class MyWordsScreenEvent{
 
     object GetFavoriteWordsEvent: MyWordsScreenEvent()
 
+    object RestoreStateEvent: MyWordsScreenEvent()
+
 }
 

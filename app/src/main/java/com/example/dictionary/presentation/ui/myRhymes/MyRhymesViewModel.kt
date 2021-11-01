@@ -19,27 +19,36 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+@ExperimentalStdlibApi
 @HiltViewModel
 class MyRhymesViewModel
 @ExperimentalStdlibApi
 @Inject
 constructor(
-    val getFavoriteRhymes: GetFavoriteRhymes
+    private val getFavoriteRhymes: GetFavoriteRhymes
 ) : ViewModel() {
 
     val myRhymesList: MutableState<List<RhymesMinimal>?> = mutableStateOf(null)
     val dialogQueue = DialogQueue()
     var loading = mutableStateOf(false)
-    val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
-    fun onStart() {
-        // start task - the composable has entered the composition
-        myRhymesList.value = null // shimmer only shows when this is null
-        onLoad.value = false // to get a fresh list from cache
+    init {
+        // fire a one-off event to get the rhymes from cache
+        onTriggerEvent(MyRhymesScreenEvent.GetFavoriteRhymesEvent)
     }
 
+    // start task - the composable has entered the composition
+    fun onStart() {
+        // to get the fresh list when coming back to this screen
+        if(myRhymesList.value == null && !loading.value){
+            onTriggerEvent(MyRhymesScreenEvent.GetFavoriteRhymesEvent)
+        }
+    }
+
+    // cancel task - the composable has left the composition
     fun onStop() {
-        // cancel task - the composable has left the composition
+        // clearing the list so that we can fetch a fresh list on onStart
+        myRhymesList.value = null
     }
 
     @ExperimentalStdlibApi

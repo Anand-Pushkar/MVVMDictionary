@@ -38,7 +38,6 @@ constructor(
 
     init {
         savedStateHandle.get<Int>(STATE_KEY_LIST_POSITION)?.let { position ->
-            Log.d(TAG, "init: position = $position")
             setScrollPosition(position)
         }
 
@@ -56,8 +55,8 @@ constructor(
 
     // cancel task - the composable has left the composition
     fun onStop() {
-        Log.d(TAG, "onStop: bye")
         comingBack.value = true
+
         // clearing the list so that we can fetch a fresh list on onStart
         myWordsList.value = null
     }
@@ -104,7 +103,6 @@ constructor(
     }
 
     fun getListScrollPosition(): Int {
-        Log.d(TAG, "getListScrollPosition: $listScrollPosition")
         return listScrollPosition
     }
 
@@ -120,4 +118,5 @@ constructor(
         listScrollPosition = position
         savedStateHandle.set(STATE_KEY_LIST_POSITION, position)
     }
+
 }

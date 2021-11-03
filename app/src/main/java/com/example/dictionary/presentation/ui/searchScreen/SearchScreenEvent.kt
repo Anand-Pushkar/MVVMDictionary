@@ -4,10 +4,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 sealed class SearchScreenEvent {
 
-    data class OnQueryChangedEvent(
-        val query: String
-    ): SearchScreenEvent()
-
     data class OnTextFieldValueChanged(
         val tfv: TextFieldValue
     ): SearchScreenEvent()

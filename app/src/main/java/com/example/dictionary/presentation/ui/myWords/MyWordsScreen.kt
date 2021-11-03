@@ -1,33 +1,22 @@
 package com.example.dictionary.presentation.ui.myWords
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
-import android.util.Log
-import androidx.compose.foundation.MutatePriority
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.ViewModel
 import com.example.dictionary.R
 import com.example.dictionary.domain.model.definition.DefinitionMinimal
 import com.example.dictionary.presentation.components.*
+import com.example.dictionary.presentation.components.util.manageScrollState
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.BlueTheme
 import com.example.dictionary.presentation.theme.immersive_sys_ui
-import com.example.dictionary.util.TAG
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.math.roundToInt
 
 
 @SuppressLint("UnrememberedMutableState")
@@ -50,7 +39,7 @@ fun MyWordsScreen(
     val scaffoldState = rememberScaffoldState()
     val dialogQueue = viewModel.dialogQueue
     val loading = viewModel.loading.value
-    val comingBack = viewModel.comingBack
+    val comingBack = viewModel.comingBack.value
 
 
     BlueTheme(
@@ -81,40 +70,30 @@ fun MyWordsScreen(
                         .verticalScroll(scrollState)
                 ) {
 
-                    if(comingBack.value){
-                        coroutineScope.launch {
-                            scrollState.scrollTo(viewModel.getListScrollPosition())
-                            if(scrollState.value == viewModel.getListScrollPosition()){
-                                viewModel.comingBack.value = false
-                            }
+                    manageScrollState(
+                        comingBack = comingBack,
+                        scope = coroutineScope,
+                        scrollState = scrollState,
+                        getScrollPosition = {
+                            viewModel.getListScrollPosition()
+                        },
+                        onChangeScrollPosition = {
+                            viewModel.onChangeScrollPosition(it)
+                        },
+                        setComingBackFalse = {
+                            viewModel.comingBack.value = false
                         }
-                    }else {
-                        if (!scrollState.isScrollInProgress){
-                            Log.d(TAG, "MyWordsScreen: here scroll not in progress")
-                            coroutineScope.launch {
-                                scrollState.scrollTo(viewModel.getListScrollPosition())
-                                if(scrollState.value == viewModel.getListScrollPosition()){
-                                    viewModel.onChangeScrollPosition(scrollState.value)
-                                }
-                            }
-
-                        }else {
-                            Log.d(TAG, "MyWordsScreen: scroll in progress")
-                            viewModel.onChangeScrollPosition(scrollState.value)
-                        }
-
-                    }
-
-
+                    )
 
                     GenericTitleBar(title = "My Words")
-                    if (loading && myWordsList == null){
+
+                    if (loading && myWordsList == null) {
                         // shimmer
                         StaggeredVerticalGrid(
                             maxColumnWidth = 220.dp,
                             modifier = Modifier.padding(4.dp)
                         ) {
-                            repeat(12){
+                            repeat(12) {
                                 LoadingListShimmer(
                                     cardHeight = (200..260).random().dp,
                                     lines = 0,
@@ -123,23 +102,19 @@ fun MyWordsScreen(
                                 )
                             }
                         }
-                    }
-                    else if (!loading && myWordsList.isNullOrEmpty()) {
+                    } else if (!loading && myWordsList.isNullOrEmpty()) {
                         NothingHere(
                             modifier = Modifier.padding(top = (height / 8).dp),
                         )
-                    }
-                    else myWordsList?.let{ myWordsList ->
+                    } else myWordsList?.let { myWordsList ->
                         StaggeredVerticalGrid(
                             maxColumnWidth = 220.dp,
                             modifier = Modifier.padding(4.dp)
                         ) {
-                            
                             myWordsList.forEachIndexed { index, myWord ->
                                 WordCard(
                                     myWord = myWord,
                                     onNavigateToDetailScreen = { route ->
-                                        viewModel.onChangeScrollPosition(scrollState.value)
                                         onNavigateToDetailScreen(route)
                                     }
                                 )
@@ -151,7 +126,6 @@ fun MyWordsScreen(
         }
     }
 }
-
 
 
 @ExperimentalMaterialApi
@@ -235,5 +209,6 @@ fun WordCard(
         }
     }
 }
+
 
 

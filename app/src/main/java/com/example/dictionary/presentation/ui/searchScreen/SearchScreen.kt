@@ -12,10 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -31,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import com.example.dictionary.domain.model.searchSuggestion.SearchSuggestion
 import com.example.dictionary.presentation.components.LoadingListShimmer
 import com.example.dictionary.presentation.components.NothingHere
+import com.example.dictionary.presentation.components.util.manageScrollStateForLazyColumn
 import com.example.dictionary.presentation.navigation.Screen
 import com.example.dictionary.presentation.theme.TabTheme
 import com.example.dictionary.util.TAG
+import kotlinx.coroutines.launch
 
 
 @ExperimentalMaterialApi
@@ -79,9 +78,6 @@ fun SearchScreen(
                 SearchSection(
                     onNavigateToDetailScreen = onNavigateToDetailScreen,
                     textFieldValue = textFieldValue,
-                    onQueryChanged = {
-                        viewModel.onTriggerEvent(SearchScreenEvent.OnQueryChangedEvent(it))
-                    },
                     onTextFieldValueChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnTextFieldValueChanged(it))
                     },
@@ -95,13 +91,13 @@ fun SearchScreen(
                     onNavigateToDetailScreen = onNavigateToDetailScreen,
                     searchSuggestions = searchSuggestions,
                     textFieldValue = textFieldValue,
-                    onQueryChanged = {
-                        viewModel.onTriggerEvent(SearchScreenEvent.OnQueryChangedEvent(it))
-                    },
                     onTextFieldValueChanged = {
                         viewModel.onTriggerEvent(SearchScreenEvent.OnTextFieldValueChanged(it))
                     },
                     parent = parent.value,
+                    updateScrollState = viewModel::updateScrollState,
+                    getScrollIndex = viewModel::getIndex,
+                    getScrollOffset = viewModel::getOffset
                 )
             }
         }
@@ -113,7 +109,6 @@ fun SearchScreen(
 fun SearchSection(
     onNavigateToDetailScreen: (String) -> Unit,
     textFieldValue: MutableState<TextFieldValue>,
-    onQueryChanged: (String) -> Unit,
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
     onSearchCleared: () -> Unit,
     parent: String,
@@ -131,9 +126,9 @@ fun SearchSection(
             if (it.text.trim() == "") {
                 onSearchCleared()
             } else {
-
-                onQueryChanged(it.text)
-                onTextFieldValueChanged(it)
+                if(it.text != textFieldValue.value.text){
+                    onTextFieldValueChanged(it)
+                }
             }
         },
         label = {
@@ -172,10 +167,7 @@ fun SearchSection(
                     // hide the keyboard
                     keyboardController?.hide()
 
-                    // this update the query
-                    onQueryChanged(textFieldValue.value.text.trim())
-
-                    // this update the cursor position
+                    // update the query and the cursor position
                     onTextFieldValueChanged(
                         TextFieldValue().copy(
                             text = textFieldValue.value.text.trim(),
@@ -215,15 +207,17 @@ fun SearchSection(
 fun SearchSuggestionsList(
     loading: Boolean,
     onNavigateToDetailScreen: (String) -> Unit,
-    onQueryChanged: (String) -> Unit,
     textFieldValue: MutableState<TextFieldValue>,
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
     searchSuggestions: List<SearchSuggestion>?,
     parent: String,
+    updateScrollState: (Int, Int) -> Unit,
+    getScrollIndex: () -> Int,
+    getScrollOffset: () -> Int
 ) {
     val scrollState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
-
+    val coroutineScope = rememberCoroutineScope()
 
     if (loading && searchSuggestions == null) {
         LoadingListShimmer(
@@ -251,6 +245,15 @@ fun SearchSuggestionsList(
             itemsIndexed(
                 items = ss
             ) { index: Int, item: SearchSuggestion ->
+
+                manageScrollStateForLazyColumn(
+                    scope = coroutineScope,
+                    scrollState = scrollState,
+                    getScrollIndex = getScrollIndex,
+                    getScrollOffset = getScrollOffset,
+                    updateScrollState = updateScrollState
+                )
+
                 Text(
                     text = item.word,
                     style = MaterialTheme.typography.h3,
@@ -262,10 +265,7 @@ fun SearchSuggestionsList(
                             // hide the keyboard
                             keyboardController?.hide()
 
-                            // this update the query
-                            onQueryChanged(item.word)
-
-                            // this update the cursor position
+                            // update the query and the cursor position
                             onTextFieldValueChanged(
                                 TextFieldValue().copy(
                                     text = item.word,
@@ -296,17 +296,16 @@ fun SearchSuggestionsList(
     }
 }
 
+
 private fun getRoute(
     parent: String,
     query: String,
 ): String {
-    val route: String
-    if (parent == "definition") {
-        route = Screen.DEFINITION_DETAIL_ROUTE.withArgs(query)
+    return if (parent == "definition") {
+        Screen.DEFINITION_DETAIL_ROUTE.withArgs(query)
     } else if (parent == "rhyme") {
-        route = Screen.RHYME_DETAIL_ROUTE.withArgs(query)
+        Screen.RHYME_DETAIL_ROUTE.withArgs(query)
     } else {
-        route = Screen.DEFINITION_DETAIL_ROUTE.route
+        Screen.DEFINITION_DETAIL_ROUTE.route
     }
-    return route
 }

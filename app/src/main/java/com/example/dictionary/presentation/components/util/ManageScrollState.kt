@@ -54,10 +54,12 @@ fun manageScrollStateForLazyColumn(
             scrollState.animateScrollToItem(getScrollIndex(), getScrollOffset())
             if(scrollState.firstVisibleItemIndex == getScrollIndex()
                 && scrollState.firstVisibleItemScrollOffset == getScrollOffset()){
+                Log.d(TAG, "manageScrollStateForLazyColumn: ----------------------------")
                     updateScrollState(scrollState.firstVisibleItemIndex, scrollState.firstVisibleItemScrollOffset)
             }
         }
     } else {
+        Log.d(TAG, "manageScrollStateForLazyColumn: =============================")
         updateScrollState(scrollState.firstVisibleItemIndex, scrollState.firstVisibleItemScrollOffset)
     }
 }

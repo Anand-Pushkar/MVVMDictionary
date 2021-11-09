@@ -21,8 +21,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 const val STATE_KEY_QUERY = "search.state.key.query"
-const val STATE_KEY_FIRST_VISIBLE_ITEM_INDEX = "search.state.key.first_visible_item_index"
-const val STATE_KEY_FIRST_VISIBLE_ITEM_OFFSET = "search.state.key.first_visible_item_offset"
 
 @HiltViewModel
 class SearchViewModel
@@ -45,22 +43,13 @@ constructor(
     )
     val dialogQueue = DialogQueue()
     var loading = mutableStateOf(false)
-    private var firstVisibleItemIndex = 0
-    private var firstVisibleItemScrollOffset = 0
-    private val restore: MutableState<Boolean> = mutableStateOf(false)
+
 
     init {
         /*
          * restoring state after process death
          */
-        savedStateHandle.get<Int>(STATE_KEY_FIRST_VISIBLE_ITEM_INDEX)?.let { index ->
-            setIndex(index)
-        }
-        savedStateHandle.get<Int>(STATE_KEY_FIRST_VISIBLE_ITEM_OFFSET)?.let { offset ->
-            setOffset(offset)
-        }
         savedStateHandle.get<String>(STATE_KEY_QUERY)?.let { query ->
-            restore.value = true
             loading.value = true
             onTriggerEvent(OnTextFieldValueChanged(TextFieldValue(
                 text = query,
@@ -75,9 +64,8 @@ constructor(
             try {
                 when (event) {
                     is OnTextFieldValueChanged -> {
-                        onTextFieldValueChanged(event.tfv)
+                        updateSearchSuggestions(event.tfv)
                     }
-
                     is OnSearchCleared -> {
                         onSearchCleared()
                     }
@@ -90,18 +78,13 @@ constructor(
         }
     }
 
-    private fun onTextFieldValueChanged(tfv: TextFieldValue){
+
+    // use case 1
+    private fun updateSearchSuggestions(tfv: TextFieldValue) {
+        Log.d(TAG, "updateSearchSuggestions: updating")
         setTextFieldValue(tfv)
-        onQueryChanged(tfv.text)
-    }
-
-    private fun onQueryChanged(query: String) {
-        setQuery(query)
-        updateSearchSuggestions(this.query.value)
-    }
-
-    private fun updateSearchSuggestions(query: String) {
-        Log.d(TAG, "updateSearchSuggestions: here")
+        setQuery(tfv.text)
+        val query = tfv.text
         resetSearchSuggestionsState()
 
         if (query.isNotEmpty()) {
@@ -128,7 +111,6 @@ constructor(
                         // if query has not changed, put values in searchSuggestions
                         if (ss.isNotEmpty()) {
                             searchSuggestions.value = ss
-                            restore.value = false
                         }
                         loading.value = dataState.loading
                     }
@@ -144,6 +126,7 @@ constructor(
     }
 
 
+    // use case 2
     private fun onSearchCleared() {
         setQuery("")
         setTextFieldValue(
@@ -152,23 +135,17 @@ constructor(
                 selection = TextRange(cursorPosition)
             )
         )
+        // we want to reset index and offset when search is cleared
         resetSearchSuggestionsState()
+    }
+
+
+    private fun resetSearchSuggestionsState() {
+        searchSuggestions.value = null
     }
 
     private fun setTextFieldValue(tfv: TextFieldValue) {
         this.textFieldValue.value = tfv
-    }
-
-    /**
-     * this function reset 2 values :-
-     * 1. it empties the searchSuggestions list
-     * 2. it sets the scroll position back to 0
-     */
-    private fun resetSearchSuggestionsState() {
-        searchSuggestions.value = null
-        if(!restore.value) {
-            updateScrollState(0,0)
-        }
     }
 
     private fun setQuery(query: String) {
@@ -176,26 +153,4 @@ constructor(
         savedStateHandle.set(STATE_KEY_QUERY, query)
     }
 
-    fun updateScrollState(index: Int, offset: Int){
-        setIndex(index)
-        setOffset(offset)
-    }
-
-    private fun setIndex(index: Int){
-        firstVisibleItemIndex = index
-        savedStateHandle.set(STATE_KEY_FIRST_VISIBLE_ITEM_INDEX, index)
-    }
-
-    private fun setOffset(offset: Int){
-        firstVisibleItemScrollOffset = offset
-        savedStateHandle.set(STATE_KEY_FIRST_VISIBLE_ITEM_OFFSET, offset)
-    }
-
-    fun getIndex(): Int {
-        return firstVisibleItemIndex
-    }
-
-    fun getOffset(): Int {
-        return firstVisibleItemScrollOffset
-    }
 }

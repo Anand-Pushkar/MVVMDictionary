@@ -270,18 +270,16 @@ fun MainCard(
             } else def?.let { def ->
 
                 if (def.defs != null) {
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
                                 top = 8.dp,
-                                bottom = if (GetScreenOrientation() == LANDSCAPE) {
-                                    8.dp
-                                } else {
-                                    48.dp
-                                }
+                                bottom = if (GetScreenOrientation() == LANDSCAPE) { 8.dp } else { 48.dp }
                             )
                     ) {
+
                         def.nouns?.let { nouns ->
                             if (nouns.isNotEmpty()) {
                                 item {

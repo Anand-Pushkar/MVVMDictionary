@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
-
+    
     override fun onStart() {
         super.onStart()
         myConnectivityManager.registerConnectionObserver(this)

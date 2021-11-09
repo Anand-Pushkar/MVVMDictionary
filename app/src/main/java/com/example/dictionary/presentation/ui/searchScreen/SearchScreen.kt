@@ -95,9 +95,6 @@ fun SearchScreen(
                         viewModel.onTriggerEvent(SearchScreenEvent.OnTextFieldValueChanged(it))
                     },
                     parent = parent.value,
-                    updateScrollState = viewModel::updateScrollState,
-                    getScrollIndex = viewModel::getIndex,
-                    getScrollOffset = viewModel::getOffset
                 )
             }
         }
@@ -211,13 +208,8 @@ fun SearchSuggestionsList(
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
     searchSuggestions: List<SearchSuggestion>?,
     parent: String,
-    updateScrollState: (Int, Int) -> Unit,
-    getScrollIndex: () -> Int,
-    getScrollOffset: () -> Int
 ) {
-    val scrollState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val coroutineScope = rememberCoroutineScope()
 
     if (loading && searchSuggestions == null) {
         LoadingListShimmer(
@@ -240,19 +232,10 @@ fun SearchSuggestionsList(
         LazyColumn(
             modifier = Modifier
                 .padding(top = 16.dp),
-            state = scrollState
         ) {
             itemsIndexed(
                 items = ss
             ) { index: Int, item: SearchSuggestion ->
-
-                manageScrollStateForLazyColumn(
-                    scope = coroutineScope,
-                    scrollState = scrollState,
-                    getScrollIndex = getScrollIndex,
-                    getScrollOffset = getScrollOffset,
-                    updateScrollState = updateScrollState
-                )
 
                 Text(
                     text = item.word,

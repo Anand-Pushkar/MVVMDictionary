@@ -35,6 +35,7 @@ fun NavGraphBuilder.home(
     onToggleTheme: () -> Unit,
     onNavigateToSearchScreen: (String) -> Unit,
     onNavigateToFavoriteScreen: (String) -> Unit,
+    userName: MutableState<String>,
 ) {
     composable(
         route = HomeTabs.DEFINITION.route,
@@ -56,7 +57,8 @@ fun NavGraphBuilder.home(
                 onToggleTheme = { onToggleTheme() },
                 onNavigateToSearchScreen = onNavigateToSearchScreen,
                 onNavigateToMyWordsScreen = onNavigateToFavoriteScreen,
-                navController = navController
+                navController = navController,
+                userName = userName
             )
         }
     }
@@ -78,7 +80,8 @@ fun NavGraphBuilder.home(
             onToggleTheme = { onToggleTheme() },
             onNavigateToSearchScreen = onNavigateToSearchScreen,
             onNavigateToMyRhymesScreen = onNavigateToFavoriteScreen,
-            navController = navController
+            navController = navController,
+            userName = userName
         )
     }
 }

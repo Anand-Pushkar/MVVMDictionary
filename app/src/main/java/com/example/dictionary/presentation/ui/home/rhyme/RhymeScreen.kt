@@ -28,6 +28,7 @@ fun RhymeScreen(
     onNavigateToSearchScreen: (String) -> Unit,
     onNavigateToMyRhymesScreen: (String) -> Unit,
     navController: NavHostController,
+    userName: MutableState<String>,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -46,6 +47,7 @@ fun RhymeScreen(
             bottomBar = { DictionaryBottomBar(navController = navController, tabs = tabs) },
             topBar = {
                 GreetingSection(
+                    userName = userName,
                     isNetworkAvailable = isNetworkAvailable,
                     isDarkTheme = darkTheme,
                     onToggleTheme = { onToggleTheme() })

@@ -7,20 +7,23 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.R
+import java.util.*
 
 @Composable
 fun GreetingSection(
     // pick up from datastore / shared prefs
-    name: String = "Pushkar",
+    userName: MutableState<String> = mutableStateOf("Human"),
     isNetworkAvailable: MutableState<Boolean>,
     isDarkTheme: MutableState<Boolean>,
     onToggleTheme: () -> Unit
 ) {
+    val name = userName.value.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -34,7 +37,7 @@ fun GreetingSection(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Good morning, $name",
+                text = "Greetings, ${name}",
                 style = MaterialTheme.typography.h2.copy(color = MaterialTheme.colors.onPrimary),
             )
             Text(

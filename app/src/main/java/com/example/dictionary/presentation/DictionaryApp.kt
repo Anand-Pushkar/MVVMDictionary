@@ -24,6 +24,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.plusAssign
 import com.example.dictionary.presentation.navigation.NavGraph
 import com.example.dictionary.presentation.theme.TabTheme
+import com.example.dictionary.presentation.theme.pinkDarkPrimary
 import com.example.dictionary.presentation.ui.home.HomeTabs
 import com.example.dictionary.presentation.ui.util.DialogQueue
 import com.example.dictionary.presentation.util.currentTab
@@ -45,9 +46,11 @@ fun DictionaryApp(
     isNetworkAvailable: MutableState<Boolean>,
     onToggleTheme: () -> Unit,
     finishActivity: () -> Unit,
+    setUserName: (String) -> Unit,
     setOnboardingComplete: () -> Unit,
     onboardingComplete: MutableState<Boolean>,
     startDestination: String,
+    userName: MutableState<String>,
 ) {
     Log.d(TAG, "DictionaryApp: ===============================================")
     ProvideWindowInsets {
@@ -72,7 +75,7 @@ fun DictionaryApp(
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize(),
-                backgroundColor = MaterialTheme.colors.primary,
+                backgroundColor = if(onboardingComplete.value){ MaterialTheme.colors.primary } else { pinkDarkPrimary },
                 scaffoldState = scaffoldState,
                 snackbarHost = {
                     scaffoldState.snackbarHostState
@@ -99,8 +102,10 @@ fun DictionaryApp(
                         onToggleTheme = { onToggleTheme() },
                         navController = navController,
                         setOnboardingComplete = setOnboardingComplete,
+                        setUserName = setUserName,
                         onboardingComplete = onboardingComplete,
-                        startDestination = startDestination
+                        startDestination = startDestination,
+                        userName = userName
                     )
                 }
                 LaunchedEffect(true) {

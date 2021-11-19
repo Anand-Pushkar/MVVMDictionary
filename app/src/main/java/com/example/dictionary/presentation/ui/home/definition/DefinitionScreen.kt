@@ -36,6 +36,7 @@ fun DefinitionScreen(
     onNavigateToSearchScreen: (String) -> Unit,
     onNavigateToMyWordsScreen: (String) -> Unit,
     navController: NavHostController,
+    userName: MutableState<String>,
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -54,6 +55,7 @@ fun DefinitionScreen(
             bottomBar = { DictionaryBottomBar(navController = navController, tabs = tabs) },
             topBar = {
                 GreetingSection(
+                    userName = userName,
                     isNetworkAvailable = isNetworkAvailable,
                     isDarkTheme = darkTheme,
                     onToggleTheme = { onToggleTheme() }

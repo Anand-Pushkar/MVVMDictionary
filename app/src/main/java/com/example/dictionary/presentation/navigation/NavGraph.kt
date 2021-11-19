@@ -1,7 +1,6 @@
 package com.example.dictionary.presentation.navigation
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
@@ -14,13 +13,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navArgument
 import androidx.navigation.navigation
-import com.example.dictionary.presentation.components.util.SnackbarController
 import com.example.dictionary.presentation.rememberAnimatedNavController
 import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailScreen
 import com.example.dictionary.presentation.ui.definitionDetails.DefinitionDetailViewModel
@@ -30,12 +27,12 @@ import com.example.dictionary.presentation.ui.myRhymes.MyRhymesScreen
 import com.example.dictionary.presentation.ui.myRhymes.MyRhymesViewModel
 import com.example.dictionary.presentation.ui.myWords.MyWordsScreen
 import com.example.dictionary.presentation.ui.myWords.MyWordsViewModel
-import com.example.dictionary.presentation.ui.onboarding.Onboarding
+import com.example.dictionary.presentation.ui.onboarding.OnboardingScreen
+import com.example.dictionary.presentation.ui.onboarding.OnboardingViewModel
 import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailScreen
 import com.example.dictionary.presentation.ui.rhymeDetails.RhymeDetailViewModel
 import com.example.dictionary.presentation.ui.searchScreen.SearchScreen
 import com.example.dictionary.presentation.ui.searchScreen.SearchViewModel
-import com.example.dictionary.util.TAG
 
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 //import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -55,8 +52,10 @@ fun NavGraph(
     finishActivity: () -> Unit = {},
     navController: NavHostController = rememberAnimatedNavController(),
     setOnboardingComplete: () -> Unit,
+    setUserName: (String) -> Unit,
     onboardingComplete: MutableState<Boolean>,
     startDestination: String,
+    userName: MutableState<String>,
 ) {
 
     BoxWithConstraints {
@@ -72,6 +71,7 @@ fun NavGraph(
                 isNetworkAvailable = isNetworkAvailable,
                 navController = navController,
                 finishActivity = finishActivity,
+                setUserName = setUserName,
                 setOnboardingComplete = setOnboardingComplete
             )
 
@@ -99,7 +99,8 @@ fun NavGraph(
                             }
                         }
 
-                    }
+                    },
+                    userName = userName
                 )
             }
 
@@ -144,12 +145,14 @@ fun NavGraph(
 }
 
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 fun NavGraphBuilder.onBoardingScreen(
     isNetworkAvailable: MutableState<Boolean>,
     navController: NavHostController,
     finishActivity: () -> Unit = {},
+    setUserName: (String) -> Unit,
     setOnboardingComplete: () -> Unit,
 ){
     composable(
@@ -157,14 +160,24 @@ fun NavGraphBuilder.onBoardingScreen(
         exitTransition = { _, _ ->
             fadeOut(animationSpec = tween(300))
         },
-    ) {
+    ) { backStackEntry: NavBackStackEntry ->
         // Intercept back in Onboarding: make it finish the activity
         BackHandler {
             finishActivity()
         }
 
-        Onboarding(
-            isNetworkAvailable = isNetworkAvailable
+        val factory = HiltViewModelFactory(
+            LocalContext.current, backStackEntry
+        )
+
+        val viewModel: OnboardingViewModel = viewModel(
+            key = "OnboardingViewModel",
+            factory = factory
+        )
+        OnboardingScreen(
+            isNetworkAvailable = isNetworkAvailable,
+            viewModel = viewModel,
+            setUserName = setUserName
         ) {
             // Set the flag so that onboarding is not shown next time, flag is stored in dataStore.
             setOnboardingComplete()

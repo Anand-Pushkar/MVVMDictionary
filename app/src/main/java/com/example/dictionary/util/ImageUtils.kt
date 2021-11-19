@@ -13,7 +13,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.dictionary.R
 
-const val DEFAULT_RECIPE_IMAGE = R.drawable.empty_plate
+const val DEFAULT_RECIPE_IMAGE = R.mipmap.logo
 
 @SuppressLint("UnrememberedMutableState")
 @Composable

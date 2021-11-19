@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Dictionary</string>
+    <string name="app_name">Lit Crypt</string>
 
     <!-- Home Tabs -->
     <string name="definition">Definition</string>
@@ -7,7 +7,7 @@
     <string name="favouriteWords">My Words</string>
     <string name="favouriteRhymes">My Rhymes</string>
     <string name="label_continue">Continue</string>
-    <string name="label_enter_name">Tell us your name</string>
+    <string name="label_enter_name">Tell us your first name</string>
 
 
 </resources>

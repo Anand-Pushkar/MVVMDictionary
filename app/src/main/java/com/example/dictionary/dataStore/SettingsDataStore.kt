@@ -7,6 +7,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.createDataStore
 import com.example.dictionary.presentation.BaseApplication
 import com.example.dictionary.util.TAG
@@ -38,13 +39,17 @@ constructor(
 
     val showSplashScreen = mutableStateOf(true)
     private val onboardingComplete = mutableStateOf(false)
-    private val isDark = mutableStateOf(false)
+    private val isDark = mutableStateOf(true)
+    private val userName = mutableStateOf("")
 
-    fun getOnboardingCompleteValue(): MutableState<Boolean>{
+    fun getOnboardingCompleteValue(): MutableState<Boolean> {
         return onboardingComplete
     }
-    fun getIsDarkValue(): MutableState<Boolean>{
+    fun getIsDarkValue(): MutableState<Boolean> {
         return isDark
+    }
+    fun getUserName(): MutableState<String> {
+        return userName
     }
 
     fun toggleTheme(){
@@ -52,6 +57,14 @@ constructor(
             datastore.edit { preferences ->
                 val current = preferences[DARK_THEME_KEY]?: false
                 preferences[DARK_THEME_KEY] = !current
+            }
+        }
+    }
+
+    fun setUserName(name: String){
+        scope.launch {
+            datastore.edit { preferences ->
+                preferences[USER_NAME_KEY] = name
             }
         }
     }
@@ -81,6 +94,11 @@ constructor(
                 onboardingComplete.value = isOnboardingComplete
             }
 
+            preferences[USER_NAME_KEY]?.let { name ->
+                Log.d(TAG, "observeDataStore: name = ${name}")
+                userName.value = name
+            }
+
             showSplashScreen.value = false
 
         }.launchIn(scope)
@@ -91,5 +109,6 @@ constructor(
     companion object{
         private val DARK_THEME_KEY = booleanPreferencesKey("dark_theme_key")
         private val ONBOARDING_KEY = booleanPreferencesKey("onboarding_key")
+        private val USER_NAME_KEY = stringPreferencesKey("user_name")
     }
 }

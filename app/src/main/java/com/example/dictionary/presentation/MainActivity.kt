@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
 
         val isDark = settingsDataStore.getIsDarkValue()
         val onboardingComplete = settingsDataStore.getOnboardingCompleteValue()
+        val userName = settingsDataStore.getUserName()
 
         if(settingsDataStore.showSplashScreen.value){
 
@@ -74,9 +75,11 @@ class MainActivity : ComponentActivity() {
                                 isNetworkAvailable = myConnectivityManager.isNetworkAvailable,
                                 onToggleTheme = { settingsDataStore.toggleTheme() },
                                 finishActivity = { finish() },
+                                setUserName = { settingsDataStore.setUserName(it) },
                                 setOnboardingComplete = { settingsDataStore.setOnboardingComplete() },
                                 onboardingComplete = onboardingComplete,
-                                startDestination = startDestination
+                                startDestination = startDestination,
+                                userName = userName
                             )
                         }
                     }.start()
@@ -91,9 +94,11 @@ class MainActivity : ComponentActivity() {
                     isNetworkAvailable = myConnectivityManager.isNetworkAvailable,
                     onToggleTheme = { settingsDataStore.toggleTheme() },
                     finishActivity = { finish() },
+                    setUserName = { settingsDataStore.setUserName(it) },
                     setOnboardingComplete = { settingsDataStore.setOnboardingComplete() },
                     onboardingComplete = onboardingComplete,
-                    startDestination = startDestination
+                    startDestination = startDestination,
+                    userName = userName
                 )
             }
         }

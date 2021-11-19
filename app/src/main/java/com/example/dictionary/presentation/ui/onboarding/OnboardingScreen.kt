@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.dictionary.R
 import com.example.dictionary.presentation.components.util.SnackbarController
 import com.example.dictionary.presentation.theme.PinkTheme
+import com.example.dictionary.presentation.theme.pinkDarkPrimary
 import com.example.dictionary.util.TAG
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -60,7 +61,7 @@ fun OnboardingScreen(
     ) {
         Scaffold(
             topBar = { AppBar() },
-            backgroundColor = MaterialTheme.colors.primary,
+            backgroundColor = pinkDarkPrimary,
             scaffoldState = scaffoldState,
             snackbarHost = {
                 scaffoldState.snackbarHostState

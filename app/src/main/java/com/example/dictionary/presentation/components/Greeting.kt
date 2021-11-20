@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.dictionary.R
 import java.util.*
@@ -34,11 +35,14 @@ fun GreetingSection(
                 bottom = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         Column(
+            modifier = Modifier.fillMaxWidth(0.8f),
             verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = "Greetings, ${name}",
                 style = MaterialTheme.typography.h2.copy(color = MaterialTheme.colors.onPrimary),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
             Text(
                 text = "We wish you have a good day!",

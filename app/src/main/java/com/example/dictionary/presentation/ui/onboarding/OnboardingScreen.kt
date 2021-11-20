@@ -1,5 +1,6 @@
 package com.example.dictionary.presentation.ui.onboarding
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -8,10 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Explore
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -21,6 +19,7 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -35,6 +34,7 @@ import com.example.dictionary.util.TAG
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 
+@SuppressLint("UnrememberedMutableState")
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
@@ -54,6 +54,7 @@ fun OnboardingScreen(
     Log.d(TAG, "Onboarding: hello")
 
     PinkTheme(
+        darkTheme = mutableStateOf(true),
         isNetworkAvailable = isNetworkAvailable,
         displayProgressBar = false,
         scaffoldState = scaffoldState,
@@ -61,7 +62,7 @@ fun OnboardingScreen(
     ) {
         Scaffold(
             topBar = { AppBar() },
-            backgroundColor = pinkDarkPrimary,
+            backgroundColor = MaterialTheme.colors.primary,
             scaffoldState = scaffoldState,
             snackbarHost = {
                 scaffoldState.snackbarHostState
@@ -131,12 +132,7 @@ fun OnboardingScreen(
                             viewModel.onSearchCleared()
                         } else {
                             viewModel.onTriggerEvent(
-                                OnboardingScreenEvent.OnTextFieldValueChanged(
-                                    TextFieldValue().copy(
-                                        text = it.text.trim(),
-                                        selection = it.selection
-                                    )
-                                )
+                                OnboardingScreenEvent.OnTextFieldValueChanged(it)
                             )
                         }
                     },

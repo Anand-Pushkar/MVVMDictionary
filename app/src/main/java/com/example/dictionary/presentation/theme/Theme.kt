@@ -185,13 +185,14 @@ private val PinkThemeDark = darkColors(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PinkTheme(
+    darkTheme: MutableState<Boolean>,
     isNetworkAvailable: MutableState<Boolean>,
     displayProgressBar: Boolean,
     scaffoldState: ScaffoldState,
     dialogQueue: Queue<GenericDialogInfo>,
     content: @Composable () -> Unit
 ) {
-    val darkTheme: MutableState<Boolean> = mutableStateOf(isSystemInDarkTheme())
+    //val darkTheme: MutableState<Boolean> = mutableStateOf(isSystemInDarkTheme())
     val colors = if (darkTheme.value) {
         PinkThemeDark
     } else {

@@ -43,7 +43,7 @@ constructor(
     )
     val dialogQueue = DialogQueue()
     var loading = mutableStateOf(false)
-
+    val comingBack = mutableStateOf(false)
 
     init {
         /*

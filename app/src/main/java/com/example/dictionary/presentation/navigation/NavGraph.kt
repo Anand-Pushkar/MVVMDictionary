@@ -438,6 +438,7 @@ fun NavGraphBuilder.definitionDetailScreen(
                 onNavigateToSearchScreen = { route ->
                     // In order to discard duplicated navigation events, we check the Lifecycle
                     if (backStackEntry.lifecycleIsResumed()) {
+                        navController.popBackStack()
                         navController.navigate(route)
                     }
                 },
@@ -506,6 +507,7 @@ fun NavGraphBuilder.rhymeDetailScreen(
                 onNavigateToSearchScreen = { route ->
                     // In order to discard duplicated navigation events, we check the Lifecycle
                     if (backStackEntry.lifecycleIsResumed()) {
+                        navController.popBackStack()
                         navController.navigate(route)
                     }
                 },

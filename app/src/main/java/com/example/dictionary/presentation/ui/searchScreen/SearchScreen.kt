@@ -18,6 +18,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +52,7 @@ fun SearchScreen(
     val loading = viewModel.loading.value
     val scaffoldState = rememberScaffoldState()
     val dialogQueue = viewModel.dialogQueue
+    val comingBack = viewModel.comingBack.value
 
     TabTheme(
         isDarkTheme = isDark,
@@ -85,6 +87,8 @@ fun SearchScreen(
                         viewModel.onTriggerEvent(SearchScreenEvent.OnSearchCleared)
                     },
                     parent = parent.value,
+                    comingBack = comingBack,
+                    setComingBackTrue = { viewModel.comingBack.value = true }
                 )
                 SearchSuggestionsList(
                     loading = loading,
@@ -109,6 +113,8 @@ fun SearchSection(
     onTextFieldValueChanged: (TextFieldValue) -> Unit,
     onSearchCleared: () -> Unit,
     parent: String,
+    comingBack: Boolean,
+    setComingBackTrue: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -194,8 +200,12 @@ fun SearchSection(
     )
 
     DisposableEffect(Unit) {
-        focusRequester.requestFocus()
-        onDispose { }
+        if(!comingBack){
+            focusRequester.requestFocus()
+        }
+        onDispose {
+            setComingBackTrue()
+        }
     }
 }
 

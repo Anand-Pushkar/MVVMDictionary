@@ -231,7 +231,7 @@ fun SearchSuggestionsList(
             padding = 8.dp,
         )
     }
-    else if (!loading && searchSuggestions == null) { // this condition is the initial state of our search screen
+    else if (!loading && searchSuggestions == null) {
 
         if(textFieldValue.value.text.isNotEmpty()){
             NothingHere()

@@ -20,7 +20,7 @@ class DefinitionEntityMapper: DomainMapper<DefinitionEntity, Definition> {
     }
 
     // for MyWords we only need what DefinitionMinimal holds,
-    // so we will be mapping from DefinitionEntity to DefinitionMinimal.
+    // so we will be mapping from DefinitionEntityMinimalResponse to DefinitionMinimal.
     fun mapToDomainMinimalModel(model: DefinitionEntityMinimalResponse): DefinitionMinimal {
         return DefinitionMinimal(
             word = model.word,

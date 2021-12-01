@@ -174,15 +174,3 @@ private fun AppBar() {
         )
     }
 }
-
-
-//@SuppressLint("UnrememberedMutableState")
-//@ExperimentalMaterialApi
-//@Preview(name = "Onboarding")
-//@Composable
-//private fun OnboardingPreview() {
-//    Onboarding(
-//        isNetworkAvailable = mutableStateOf(true)
-//    ) {}
-//}
-

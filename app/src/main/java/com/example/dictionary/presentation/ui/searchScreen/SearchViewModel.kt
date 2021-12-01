@@ -109,7 +109,7 @@ constructor(
                         }
                     } else {
                         // if query has not changed, put values in searchSuggestions
-                        if (ss.isNotEmpty()) {
+                        if (ss.isNotEmpty()) { // if ss is empty, we do not put any value in searchSuggestions, leaving it null
                             searchSuggestions.value = ss
                         }
                         loading.value = dataState.loading

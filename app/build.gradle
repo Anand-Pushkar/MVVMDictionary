@@ -51,8 +51,8 @@ android {
         useIR = true
     }
     composeOptions {
-        def kotlin_compiler_version = Version.kotlin
-        kotlinCompilerVersion kotlin_compiler_version
+//        def kotlin_compiler_version = Version.kotlin
+//        kotlinCompilerVersion kotlin_compiler_version
 
         def kotlin_compiler_extension_version = Version.compose
         kotlinCompilerExtensionVersion kotlin_compiler_extension_version

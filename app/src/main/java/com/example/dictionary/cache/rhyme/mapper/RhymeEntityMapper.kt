@@ -29,7 +29,6 @@ class RhymeEntityMapper: DomainMapper<RhymeEntity, Rhyme> {
     }
 
 
-
     // for MyRhymes screen
     fun mapToDomainMinimalModel(model: MyRhymeEntity): RhymesMinimal {
         return RhymesMinimal(
@@ -37,7 +36,6 @@ class RhymeEntityMapper: DomainMapper<RhymeEntity, Rhyme> {
             syllableInfo = model.syllableInfo
         )
     }
-
 
 
     // for RhymeDetailScreen

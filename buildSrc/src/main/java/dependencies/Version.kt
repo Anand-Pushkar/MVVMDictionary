@@ -5,8 +5,8 @@ object Version{
     const val buildTools = "30.0.3"
     const val minSdk = 24
     const val targetSdk = 31
-    const val versionCode = 1
-    const val versionName = "1.0"
+    const val versionCode = 2
+    const val versionName = "1.1"
     const val jvmTarget = "1.8"
 
     const val accompanist = "0.15.0"

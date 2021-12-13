@@ -20,6 +20,14 @@ plugins {
 
 
 android {
+    signingConfigs {
+        relaeaseConfig {
+            storeFile file('C:\\Users\\dell\\Android keystore\\MyAndroidKeystore.jks')
+            storePassword '8aces3791ten'
+            keyAlias 'wordictApp_key'
+            keyPassword '8aces3791ten'
+        }
+    }
     compileSdkVersion Version.compileSdk
     buildToolsVersion Version.buildTools
 
@@ -31,6 +39,7 @@ android {
         versionName Version.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.relaeaseConfig
     }
 
     buildFeatures {
@@ -38,6 +47,7 @@ android {
     }
     buildTypes {
         release {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -51,9 +61,6 @@ android {
         useIR = true
     }
     composeOptions {
-//        def kotlin_compiler_version = Version.kotlin
-//        kotlinCompilerVersion kotlin_compiler_version
-
         def kotlin_compiler_extension_version = Version.compose
         kotlinCompilerExtensionVersion kotlin_compiler_extension_version
     }
@@ -105,7 +112,7 @@ dependencies {
     implementation Square.retrofit
     implementation Square.retrofit_gson
     implementation Square.okHttp
-    implementation Square.leak_canary
+    debugImplementation Square.leak_canary
 
     kapt AnnotationProcessing.hilt_compiler //
     kapt AnnotationProcessing.glide_compiler

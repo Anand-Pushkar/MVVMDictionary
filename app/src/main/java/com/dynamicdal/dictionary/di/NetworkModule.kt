@@ -46,10 +46,5 @@ object NetworkModule {
         return SearchSuggestionDtoMapper()
     }
 
-    @Singleton
-    @Provides
-    @Named("meta_data")
-    fun provideMetaData(): String{
-        return "dsr"
-    }
+
 }

@@ -1,3 +1,3 @@
-# MVVMDictionary
-MVVM DICTIONARY
-Can be used as the blank slate for any project that uses compose, hilt, mmvm
+Wordict App
+Playstore link: https://play.google.com/store/apps/details?id=com.dynamicdal.dictionary
+

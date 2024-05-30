@@ -22,7 +22,7 @@ object NetworkModule {
     @Provides
     fun provideWordService(): WordService {
         return Retrofit.Builder()
-            .baseUrl("https://api.datamuse.com/")
+            .baseUrl("check notes")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(WordService::class.java)
